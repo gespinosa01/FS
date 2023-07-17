@@ -11,8 +11,22 @@
 ;-------------------------------------------------------------
 ;FASE 1. MAQUETADO de SOFTWARE           -Fecha 13 julio 2023-
 ;------------------------------------------------------------- 
+;INSTRUCCIONES:
+;   1.  Definir una paleta de colores, máximo 3 colores
+;       cada pantalla, deberá estar alineada a la paleta
+;       de colores.
+;   2.  Por equipo, definir un logotipo. Debe ser original.
+;   3.  Cada pantalla deberá tener el logotipo, un encabezado
+;       y un pie de página.
+;   4.  Cada pantalla deberá tener un fondo de algún caracter.
+;   5.  Definir el menú, pantalla login, pantalla <1>.
+;**************************************************************
+.MODEL SMALL           
+.STACK
+.DATA 
+;==============================================================================
 ;                       MACROS                           
-;
+;==============================================================================
 ;  
 Imprime_cad_color MACRO CADENA, LONGITUD, RENGLON, COLUMNA, MODO, COLOR, PAGINA 
     MOV AH,19
@@ -39,21 +53,7 @@ LEER_CADENA MACRO CADENA
     LEA DX,CADENA
     INT 21H
 LEER_CADENA ENDM
-;-------------------------------------------------------------
-;-------------------------------------------------------------
-;INSTRUCCIONES:
-;   1.  Definir una paleta de colores, máximo 3 colores
-;       cada pantalla, deberá estar alineada a la paleta
-;       de colores.
-;   2.  Por equipo, definir un logotipo. Debe ser original.
-;   3.  Cada pantalla deberá tener el logotipo, un encabezado
-;       y un pie de página.
-;   4.  Cada pantalla deberá tener un fondo de algún caracter.
-;   5.  Definir el menú, pantalla login, pantalla <1>.
-;**************************************************************
-.MODEL SMALL           
-.STACK
-.DATA
+;================================================================================
 LINEA       DB      80  DUP(219)
 OP1         DB      '1. Entregar un mensaje    '
 OP2         DB      '2. Entregar suministros   '
@@ -91,7 +91,7 @@ LOGOG       db 10,13,10,13,'                    ',219,219,219,219,219,219,219,21
             db '                                                                               ',10,13
 
 RENGLON     DB      0
-OP          DB      0
+OP          DB      0  
 
 .CODE
 INICIO:
@@ -162,7 +162,8 @@ LOOP CICLOLINEALOGIN
     MOV BH,0
     INT 10H
         MOV AH, 1
-        INT 21H
+        INT 21H 
+        
 
 
 ;===================================================
