@@ -10,6 +10,36 @@
 ;   
 ;-------------------------------------------------------------
 ;FASE 1. MAQUETADO de SOFTWARE           -Fecha 13 julio 2023-
+;------------------------------------------------------------- 
+;                       MACROS                           
+;
+;  
+Imprime_cad_color MACRO CADENA, LONGITUD, RENGLON, COLUMNA, MODO, COLOR, PAGINA 
+    MOV AH,19
+    LEA BP,CADENA
+    MOV CX,LONGITUD
+    MOV DH,RENGLON
+    MOV DL,COLUMNA
+    MOV AL,MODO
+    MOV BL,COLOR
+    MOV BH,PAGINA
+    INT 10H    
+Imprime_cad_color ENDM 
+
+CURSOR MACRO RENGLON,COLUMNA,PAGINA
+    MOV AH,2
+    MOV DH,RENGLON
+    MOV DL,COLUMNA,
+    MOV BH,PAGINA
+    INT 10H
+CURSOR ENDM 
+
+LEER_CADENA MACRO CADENA 
+    MOV AH,10
+    LEA DX,CADENA
+    INT 21H
+LEER_CADENA ENDM
+;-------------------------------------------------------------
 ;-------------------------------------------------------------
 ;INSTRUCCIONES:
 ;   1.  Definir una paleta de colores, máximo 3 colores
