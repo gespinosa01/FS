@@ -61,7 +61,7 @@
 ;***************************** FIN VARIABLES LOGIN ********************************************
 ;==============================================================================================
 ;***************************** VARIABLES MENÚ *************************************************
-    MSJTITULO   DB      '     FUNCIONALIDADES     '
+    MSJMENU   DB      '     FUNCIONALIDADES     '
     MSJFUNCION  DB      '[PRESIONA ENTER PARA CONTINUAR]';31
     MSJOPCION1  DB      '1.Enviar recursos        '
     MSJOPCION2  DB      '2.Detectar enemigos      '
@@ -92,8 +92,15 @@
                 DB '                    | |\/| |/ _ \ ´_ \| | | |',10,13
                 DB '                    | |  | |  __/ | | | |_| |',10,13
                 DB '                    \_|  |_/\___|_| |_|\__,_|',10,13         
-
-
+;***************************  FIN VARIABLES MENU ******************************
+;==============================================================================
+;*************************** VARIABLES RECURSOS *******************************
+    MSJRECURSOS DB      '        ===RECURSOS===         '
+    MSJPREGUNTA DB      'Deseas enviar recursos?[   ]   ';31
+    MSJSI       DB      '1.Si                           '
+    MSJNO       DB      '2.No                           '
+    OPCION      DB      0
+;*************************** FIN VARIABLES RECURSOS ***************************
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -153,7 +160,7 @@ ENCABEZADO_Y_PIE ENDM
 ;                               CODE
 ;============================================================                             
 .CODE
-;***************************** LOGIN ************************
+;============================= LOGIN ========================
 LOGIN:
     MOV AX, @DATA
     MOV DS, AX
@@ -162,8 +169,7 @@ LOGIN:
 MOV CX,25
 FONDOLOGIN:
     PUSH CX
-    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,8FH,0
-        INT 10H        
+    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,8FH,0       
         INC RENGLON
     POP CX
 LOOP FONDOLOGIN
@@ -265,8 +271,6 @@ CONTRASEÑACORRECTA:
 CONTRASEÑAINCORRECTA:
     IMP_CAD_COLOR   CONTRASEÑAINC, 40, 23, 30, 0, 0FCH, 0
     JMP CONTRASEÑA_INICIO
-
-;***********************    FIN LOGIN    *************************
     
 ;=================================================================
 ;                            MENÚ
@@ -276,8 +280,7 @@ MOV CX,25
 MOV RENGLON, 0
 FONDOMENU:
     PUSH CX
-    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 0FCH, 0
-        INT 10H        
+    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 0FCH, 0       
         INC RENGLON
     POP CX
 LOOP FONDOMENU
@@ -306,8 +309,8 @@ ENCABEZADO_Y_PIE
     MOV BL, 0CFH
     INT 10H 
     
-        IMP_CAD_COLOR msjtitulo,25,12,18,0,0CFH,0
-        IMP_CAD_COLOR msjFuncion,25,20,20,0,0CFH,0
+        IMP_CAD_COLOR MSJMENU,25,12,18,0,0CFH,0
+        IMP_CAD_COLOR MSJFUNCION,25,20,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion1,25,14,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion2,25,16,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion3,25,18,20,0,0CFH,0
@@ -328,8 +331,52 @@ ENCABEZADO_Y_PIE
 ;                   VENTANA RECURSOS
 ;==========================================================
 VENTANARECURSOS:
-JMP FIN       
+MOV CX,25
+FONDOVENTANARECURSOS:
+    PUSH CX
+    IMP_CAD_COLOR linea,80,RENGLON,0,0,0FCH,0       
+        INC RENGLON
+    POP CX
+LOOP FONDOVENTANARECURSOS
+
+ENCABEZADO_Y_PIE
+
+;IMPRIMIR LOGO
+    MOV AH, 19
+    LEA BP, LOGOP
+    MOV CX, 794
+    MOV DH, 3    ;renglon
+    MOV DL, 55    ;columna
+    MOV AL, 0    ;modo
+    MOV BH, 0
+    MOV BL, 0CFH
+    INT 10H
+    
+    ;imprimir menu
+        IMP_CAD_COLOR MSJRECURSOS,31,5,16,0,0CFH,0 
+        IMP_CAD_COLOR msjpregunta,31,10,10,0,0CFH,0
+        IMP_CAD_COLOR msjSi,31,14,10,0,0CFH,0
+        IMP_CAD_COLOR msjNo,31,16,10,0,0CFH,0
+
+CICLORECURSO:       
+        ;COLOCAR CURSOR
+        MOV AH,2
+        MOV DH,10
+        MOV DL,35
+        MOV BH,0
+        INT 10H
+        ;Esperar tecla
+        MOV AH,1
+        INT 21H
+            MOV OPCION, AL
+        CMP OPCION, '1'
+        JE SIGVEN
+        CMP OPCION, '2'
+        JE SIGVEN
+JMP CICLORECURSO
         
+SIGVEN:
+            
 FIN:
         MOV AX, 4C00H
         INT 21H
