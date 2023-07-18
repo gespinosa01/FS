@@ -24,8 +24,7 @@
 .MODEL SMALL           
 .STACK
 .DATA
-    ;**************** VARIABLES LOGIN *************************
-    
+;******************* VARIABLES LOGIN *************************    
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
     MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
@@ -115,6 +114,19 @@
     MSJDENUEVO2         DB  '2. MENSAJE LISTO            ';28
     R                   DB  0
 ;************************** FIN VARIABLES MENSAJE *****************************
+;==============================================================================
+;************************ VARIABLES UBICACION *********************************
+    TITULOUBICACION     DB      'INDIQUE LA UBICACI',162,'N A DONDE DESEE ENVIAR A SOLOVINO'
+    MSJLATITUD          DB      'LATITUD:    ';12
+    MSJLONGITUD         DB      'LONGITUD:   ';12
+    LATITUDC            DB      10, 0, 10 DUP(36)
+    MSJNS               DB      'NORTE[N] SUR[S]:   ';19
+    NS                  DB      0
+    MSJEO               DB      'ESTE[E] OESTE[O]:  ';19
+    EO                  DB      0
+    LONGITUDC           DB      10, 0, 10 DUP(36)
+;************************ FIN VARIABLES UBICACION *****************************
+
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -346,6 +358,7 @@ ENCABEZADO_Y_PIE
 ;==========================================================
 VENTANARECURSOS:
 MOV CX,25
+MOV RENGLON, 0
 FONDOVENTANARECURSOS:
     PUSH CX
     IMP_CAD_COLOR linea,80,RENGLON,0,0,0FCH,0       
@@ -394,6 +407,7 @@ JMP CICLORECURSO
 INICIO_MENSAJE:
 MOV CX,25
     
+MOV RENGLON, 0
 FONDOMENSAJE:
     PUSH CX
     IMP_CAD_COLOR LINEA,80,RENGLON,0,0,0FCH,0
@@ -427,7 +441,7 @@ ENCABEZADO_Y_PIE
     MOV R,AL
     CMP AL,'1'
     JE ESCRIBIRMENSAJE
-    JMP FIN
+    JMP UBICACION
     
 ESCRIBIRMENSAJE:
     IMP_CAD_COLOR PEDIRMSJ, 20, 10, 15, 0, 0CFH, 0
@@ -448,10 +462,74 @@ ESCRIBIRMENSAJE:
     MOV AH,1
     INT 21H
     
-    MOV R,AL
+    MOV R, AL
     CMP R,'1'
     JE ESCRIBIRMENSAJE
-    JMP FIN        
+    JMP UBICACION
+;============================================================
+;                     VENTANA UBICACION    
+;============================================================
+UBICACION:
+
+MOV CX,25
+MOV RENGLON, 0
+FONDOUBICACION:
+    PUSH CX
+    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 00FH, 0
+        INT 10H        
+        INC RENGLON
+    POP CX   
+LOOP FONDOUBICACION
+
+ENCABEZADO_Y_PIE        
+
+IMP_CAD_COLOR  TITULOUBICACION, 52, 4, 15, 0, 0F0H, 0    
+
+
+;IMPRIMIR LOGO
+    MOV AH, 19
+    LEA BP, LOGOP
+    MOV CX, 794
+    MOV DH, 8    ;renglon
+    MOV DL, 0    ;columna
+    MOV AL, 0    ;modo
+    MOV BH, 0
+    MOV BL, 0F0H
+    INT 10H    
+
+;LONGITUD
+LATITUD:
+    IMP_CAD_COLOR   MSJLATITUD, 12, 10, 15, 0, 0F0H, 0
+    CURSOR  10, 25, 0
+    LEER_CADENA LATITUDC  
+    IMP_CAD_COLOR   MSJNS, 19, 11, 15, 0, 0F0H, 0   
+REPNS:
+    CURSOR  11, 31, 0
+    MOV AH, 1
+    INT 21H
+        MOV NS, AL
+    CMP NS, 'N'
+    JE LONGITUD
+    CMP NS, 'S'
+    JE LONGITUD
+    JMP REPNS
+LONGITUD:
+    IMP_CAD_COLOR   MSJLONGITUD, 12, 13, 15, 0, 0F0H, 0
+    CURSOR  13, 25, 0
+    LEER_CADENA LONGITUDC  
+    IMP_CAD_COLOR   MSJEO, 19, 14, 15, 0, 0F0H, 0   
+REPEO:
+    CURSOR  14, 32, 0
+    MOV AH, 1
+    INT 21H
+        MOV EO, AL
+    CMP EO, 'E'
+    JE LOGIN
+    CMP EO, 'O'
+    JE LOGIN
+    JMP REPEO
+    
+
 FIN:
         MOV AX, 4C00H
         INT 21H
