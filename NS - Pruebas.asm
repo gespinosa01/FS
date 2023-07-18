@@ -25,6 +25,7 @@
 .STACK
 .DATA
     ;**************** VARIABLES LOGIN *************************
+    
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
     MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
@@ -73,7 +74,7 @@
     MATERIA     DB      'LENGUAJEZ DE INTERFAZ';21
     MAESTRA     DB      'MA. ELENA PARRA UR',161,'AS';21
     PROYECTO    DB      'PROYECTO FINAL';14
-    LOGOP       DB      '                                                       ',10,13,'    ',219,219,219,219,219,219,219,'    ',10,13  
+    LOGOP       DB      10,13,'                                                       ','    ',219,219,219,219,219,219,219,'    ',10,13  
                 DB      '                                                       ','  ',219,219,'       ',219,219,'  ',10,13    
                 DB      '                                                       ',' ',219,'  ',219,'     ',219,'  ',219,' ',10,13      
                 DB      '                                                       ',219,'  ',219,'       ',219,'  ',219,10,13
@@ -291,13 +292,28 @@ LOOP FONDOMENU
 ;IMPRIMIR MENU
     MOV AH, 19
     LEA BP, LOGO
-    MOV CX, 290
+    MOV CX, 284
     MOV DH, 3    
     MOV DL, 40    
     MOV AL, 0    
     MOV BH, 0
     MOV BL, 0CFH
-    INT 10H
+    INT 10H 
+    ;imprimir menu
+        IMP_CAD_COLOR msjtitulo,25,12,18,0,0CFH,0
+        IMP_CAD_COLOR msjFuncion,25,20,20,0,0CFH,0
+        IMP_CAD_COLOR msjOpcion1,25,14,20,0,0CFH,0
+        IMP_CAD_COLOR msjOpcion2,25,16,20,0,0CFH,0
+        IMP_CAD_COLOR msjOpcion3,25,18,20,0,0CFH,0
+       MOV AH,2
+       MOV DH,20
+       MOV DL,40
+       MOV BH,0
+       INT 10H
+       ;Esperar tecla
+        MOV AH,1
+        INT 21H
+            MOV opcion,AL 
   
 
 FIN:
