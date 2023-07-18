@@ -122,6 +122,33 @@ LEER_CADENA MACRO CADENA
     LEA DX,CADENA
     INT 21H
 LEER_CADENA ENDM
+
+ENCABEZADO_Y_PIE  MACRO
+;********************** ENCABEZADO ******************************* 
+    IMP_CAD_COLOR LINEA, 80, 0, 0, 0, 08H,0
+    IMP_CAD_COLOR LINEA, 80, 1, 0, 0, 08H,0
+    IMP_CAD_COLOR LINEA, 80, 2, 0, 0, 08H,0
+    
+    IMP_CAD_COLOR ESLOGAN, 45, 1, 18, 0, 8FH, 0                                         
+
+;******************** FIN ENCABEZADO *****************************
+
+
+;******************** PIE DE PAGINA  *****************************
+    IMP_CAD_COLOR LINEA, 80, 22, 0, 0, 08H, 0
+    IMP_CAD_COLOR LINEA, 80, 23, 0, 0, 08H, 0
+    IMP_CAD_COLOR LINEA, 80, 24, 0, 0, 08H, 0
+    
+    IMP_CAD_COLOR NOMBRE1,  22, 22,  3, 0, 8FH, 0
+    IMP_CAD_COLOR PROYECTO, 14, 22, 55, 0, 8FH, 0 
+    
+    IMP_CAD_COLOR NOMBRE2, 28, 23,  3, 0, 8FH, 0
+    IMP_CAD_COLOR MATERIA, 21, 23, 55, 0, 8FH, 0
+    
+    IMP_CAD_COLOR NOMBRE3, 26, 24,  3, 0, 8FH, 0
+    IMP_CAD_COLOR MAESTRA, 21, 24, 55, 0, 8FH, 0
+;******************* FIN PIE DE PAGINA ***************************
+ENCABEZADO_Y_PIE ENDM
 ;============================================================
 ;                               CODE
 ;============================================================                             
@@ -254,30 +281,9 @@ FONDOMENU:
         INC RENGLON
     POP CX
 LOOP FONDOMENU
-;******************** ENCABEZADO *********************************
-    IMP_CAD_COLOR LINEA, 80, 0, 0, 0, 08H,0
-    IMP_CAD_COLOR LINEA, 80, 1, 0, 0, 08H,0
-    IMP_CAD_COLOR LINEA, 80, 2, 0, 0, 08H,0
-    
-    IMP_CAD_COLOR ESLOGAN, 45, 1, 18, 0, 8FH, 0                                         
 
-;******************** FIN ENCABEZADO *****************************
+ENCABEZADO_Y_PIE
 
-
-;******************** PIE DE PAGINA  *****************************
-    IMP_CAD_COLOR LINEA, 80, 22, 0, 0, 08H, 0
-    IMP_CAD_COLOR LINEA, 80, 23, 0, 0, 08H, 0
-    IMP_CAD_COLOR LINEA, 80, 24, 0, 0, 08H, 0
-    
-    IMP_CAD_COLOR NOMBRE1,  22, 22,  3, 0, 8FH, 0
-    IMP_CAD_COLOR PROYECTO, 14, 22, 55, 0, 8FH, 0 
-    
-    IMP_CAD_COLOR NOMBRE2, 28, 23,  3, 0, 8FH, 0
-    IMP_CAD_COLOR MATERIA, 21, 23, 55, 0, 8FH, 0
-    
-    IMP_CAD_COLOR NOMBRE3, 26, 24,  3, 0, 8FH, 0
-    IMP_CAD_COLOR MAESTRA, 21, 24, 55, 0, 8FH, 0
-;******************* FIN PIE DE PAGINA ***************************
 ;IMPRIMIR LOGO
     MOV AH, 19
     LEA BP, LOGOP
