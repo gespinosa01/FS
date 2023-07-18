@@ -62,11 +62,11 @@
 ;==============================================================================================
 ;***************************** VARIABLES MENÚ *************************************************
     MSJTITULO   DB      '     FUNCIONALIDADES     '
-    MSJFUNCION  DB      'Elije una funcion:[   ]  '
+    MSJFUNCION  DB      '[PRESIONA ENTER PARA CONTINUAR]';31
     MSJOPCION1  DB      '1.Enviar recursos        '
     MSJOPCION2  DB      '2.Detectar enemigos      '
     MSJOPCION3  DB      '3.Enviar mensajes        ' 
-    OPCION      DB      0,'$'
+    RASTREO     DB      0
     ESLOGAN     DB      'FIRULAIS SOLOVINO - EL MENSAJERO DE ESPERANZA'
     NOMBRE1     DB      'GERARDO ESPINOSA ROSAS';22   
     NOMBRE2     DB      'GADYEL JOSUE M',160,'RTINEZ G',163,'ZMAN';28
@@ -305,23 +305,31 @@ ENCABEZADO_Y_PIE
     MOV BH, 0
     MOV BL, 0CFH
     INT 10H 
-    ;imprimir menu
+    
         IMP_CAD_COLOR msjtitulo,25,12,18,0,0CFH,0
         IMP_CAD_COLOR msjFuncion,25,20,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion1,25,14,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion2,25,16,20,0,0CFH,0
         IMP_CAD_COLOR msjOpcion3,25,18,20,0,0CFH,0
-       MOV AH,2
-       MOV DH,20
-       MOV DL,40
-       MOV BH,0
-       INT 10H
-       ;Esperar tecla
-        MOV AH,1
-        INT 21H
-            MOV opcion,AL 
+        IMP_CAD_COLOR msjFuncion,31,20,20,0,0CFH,0
+        MOV AH,2
+        MOV DH,20
+        MOV DL,90
+        MOV BH,0
+        INT 10H
+        ;Esperar ENTER
+            MOV AH,0
+            INT 16H
+            MOV RASTREO, AH ;RECUPERAR
   
-
+        CMP RASTREO, 1CH
+        JE VENTANARECURSOS
+;==========================================================
+;                   VENTANA RECURSOS
+;==========================================================
+VENTANARECURSOS:
+JMP FIN       
+        
 FIN:
         MOV AX, 4C00H
         INT 21H
