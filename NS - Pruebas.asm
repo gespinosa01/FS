@@ -102,6 +102,20 @@
     OPCION      DB      0
 ;*************************** FIN VARIABLES RECURSOS ***************************
 ;==============================================================================
+;************************** VARIABLES MENSAJE *********************************
+    PREGUNTARMENSAJE    DB  'DESEA MANDAR UN MENSAJE? ';25
+    OPCMSJ1             DB  '1. SI' ;5
+    OPCMSJ2             DB  '2. NO' ;5
+    RESMSJ              DB  'RESPUESTA: ' ;11 
+    PEDIRMSJ            DB  'ESCRIBA SU MENSAJE: ';20
+    ESPACIOMSJ          DB  '___________________________________';70
+    MENSAJE             DB  35,0,36 DUP('$')
+    MENSAJE2            DB  35,0,36 DUP('$')
+    MSJDENUEVO          DB  '1. ESCRIBIR MENSAJE DE NUEVO';28
+    MSJDENUEVO2         DB  '2. MENSAJE LISTO            ';28
+    R                   DB  0
+;************************** FIN VARIABLES MENSAJE *****************************
+;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
 IMP_CAD_COLOR MACRO CADENA, LONGITUD, RENGLON, COLUMNA, MODO, COLOR, PAGINA 
@@ -370,13 +384,74 @@ CICLORECURSO:
         INT 21H
             MOV OPCION, AL
         CMP OPCION, '1'
-        JE SIGVEN
+        JE INICIO_MENSAJE
         CMP OPCION, '2'
-        JE SIGVEN
+        JE INICIO_MENSAJE
 JMP CICLORECURSO
-        
-SIGVEN:
-            
+;==========================================================
+;                     VENTANA MENSAJE
+;==========================================================       
+INICIO_MENSAJE:
+MOV CX,25
+    
+FONDOMENSAJE:
+    PUSH CX
+    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,0FCH,0
+        INT 10H        
+        INC RENGLON
+    POP CX
+LOOP FONDOMENSAJE
+
+ENCABEZADO_Y_PIE
+
+;IMPRIMIR LOGO
+    MOV AH, 19
+    LEA BP, LOGOP
+    MOV CX, 794
+    MOV DH, 3    ;renglon
+    MOV DL, 55    ;columna
+    MOV AL, 0    ;modo
+    MOV BH, 0
+    MOV BL, 0CFH
+    INT 10H
+
+    IMP_CAD_COLOR PREGUNTARMENSAJE, 25, 5, 15, 0, 0CFH, 0
+    IMP_CAD_COLOR OPCMSJ1, 5, 6, 15, 0, 0CFH, 0
+    IMP_CAD_COLOR OPCMSJ2, 5, 7, 15, 0, 0CFH, 0  
+    IMP_CAD_COLOR RESMSJ, 11, 8, 15, 0, 0CFH, 0
+
+    CURSOR 8,26,0
+    MOV AH,1
+    INT 21H
+    
+    MOV R,AL
+    CMP AL,'1'
+    JE ESCRIBIRMENSAJE
+    JMP FIN
+    
+ESCRIBIRMENSAJE:
+    IMP_CAD_COLOR PEDIRMSJ, 20, 10, 15, 0, 0CFH, 0
+    IMP_CAD_COLOR ESPACIOMSJ, 35, 12, 15, 0, 0CFH, 0
+    IMP_CAD_COLOR ESPACIOMSJ, 35, 14, 15, 0, 0CFH, 0
+    
+    ;ESCRIBIR EL MENSAJE
+    CURSOR 12,15,0
+    LEER_CADENA MENSAJE
+    CURSOR 14,15,0
+    LEER_CADENA MENSAJE
+    
+    IMP_CAD_COLOR MSJDENUEVO, 28, 16, 15, 0, 0CFH, 0 
+    IMP_CAD_COLOR MSJDENUEVO2, 28, 17, 15, 0, 0CFH, 0                                         
+    IMP_CAD_COLOR RESMSJ, 11, 19, 15, 0, 0CFH, 0
+    
+    CURSOR 19,26,0
+    MOV AH,1
+    INT 21H
+    
+    MOV R,AL
+    CMP R,'1'
+    JE ESCRIBIRMENSAJE
+    JMP FIN        
 FIN:
         MOV AX, 4C00H
         INT 21H
