@@ -1,0 +1,101 @@
+#start=stepper_motor.exe#
+.MODEL SMALL
+.STACK
+.DATA
+VUELTA_HORARIO      DB  0000_0110B  ;6H - 6
+                    DB  0000_0100B  ;4H - 4
+                    DB  0000_0011B  ;3H - 3
+                    DB  0000_0010B  ;2H - 2
+
+
+VUELTA_ANTIHORARIO  DB 0000_0011B   ;3H - 3
+                    DB 0000_0001B   ;1H - 1
+                    DB 0000_0110B   ;6H - 6
+                    DB 0000_0010B   ;2H - 2
+
+MSJ             DB  'TECLA: '   ;7
+TECLA           DB  0
+
+.CODE
+
+INICIO:
+    MOV AX, @DATA
+    MOV DS, AX
+    MOV ES, AX    
+    MOV SI, 0
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT:
+    IN      AL, 07H
+    TEST    AL, 10000000B
+    JZ  WAIT ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    
+CICLOTECLA:     
+    MOV AH, 19
+    LEA BP, MSJ
+    MOV DH, 5
+    MOV DL, 15
+    MOV CX, 7
+    MOV BH, 0
+    MOV AL, 0
+    MOV BL, 4CH
+    INT 10H
+    
+    MOV AH, 2
+    MOV DH, 5
+    MOV DL, 22
+    MOV BH, 0
+    INT 10H
+        MOV AH, 0
+        INT 16H
+    
+    CMP AH, 4DH
+    JE PASO_HORARIO
+    CMP AH, 4BH
+    JE PASO_ANTIHORARIO
+    
+    JMP CICLOTECLA
+
+PASO_HORARIO:   
+    MOV AX, 0
+    MOV BX, OFFSET VUELTA_HORARIO
+
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+    JC  CICLOTECLA 
+    MOV SI, 0 
+JMP CICLOTECLA
+
+
+
+PASO_ANTIHORARIO:   
+    MOV AX, 0
+    MOV BX, OFFSET VUELTA_ANTIHORARIO
+
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+    JC  CICLOTECLA 
+    MOV SI, 0 
+JMP CICLOTECLA
+
+
+FIN:
+    MOV AX, 4C00H
+    INT 21H
+
+END
