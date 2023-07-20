@@ -61,7 +61,19 @@
     MSJDESTINATARIO     DB  'DESTINATARIO: ' ;14
     DESTINATARIO        DB  11,0,12 DUP('$')
     R                   DB  0
+    RW                  DW  0
+    RUTAJOSE            DB  'C:\FIRULAIS\JOSE.txt',0
+    RUTAGADYEL          DB  'C:\FIRULAIS\GADYEL.txt',0 
+    RUTAGERRY           DB  'C:\FIRULAIS\GERRY.txt',0
+    NOMBREJOSE          DB  'JOSE '
+    NOMBREGADYEL        DB  'GADY '
+    NOMBREGERRY         DB  'GERRY'
+    msjError            DB  'ERROR: NO SE HA PODIDO REALIZAR EL PROCESO.';43 
+    msjEscritura        DB  'SE HA ESCRITO EN EL ARCHIVO, VERIFIQUE     ';43
     
+    ID                  DW      0
+    DATOSLEIDOS         DB      200 DUP('_')
+    MENSAJER            DB      71 DUP('$')
 ;==============================================================================
 ;================= MACROS =====================================================                           
 ;==============================================================================  
@@ -90,6 +102,34 @@ LEER_CADENA MACRO CADENA
     LEA DX,CADENA
     INT 21H
 LEER_CADENA ENDM
+
+ABRIR_ARCHIVO MACRO RUTA,MODO
+    MOV AH,3DH
+    LEA DX,RUTA
+        MOV AL,MODO
+    INT 21H 
+        MOV ID,AX ; RECUPERAR ID
+        ; -----MODOS-----
+        ; -> Solo lectura       =0
+        ; -> Solo escritura     =1
+        ; -> Lectura/Escritura  =2
+ABRIR_ARCHIVO ENDM
+
+ESCRIBIR_ARCHIVO MACRO ID,CUANTOS_ESCRIBIR,DATOS_ESCRIBIR
+    MOV AH,40H
+    MOV BX,ID
+    MOV CX,CUANTOS_ESCRIBIR
+    LEA DX,DATOS_ESCRIBIR
+    INT 21H    
+ESCRIBIR_ARCHIVO ENDM
+
+LEER_ARCHIVO MACRO ID,CUANTOS_LEER,DATOS_LEIDOS
+    MOV AH,3FH
+    MOV BX,ID
+    MOV CX,CUANTOS_LEER
+    LEA DX,DATOS_LEIDOS
+    INT 21H
+LEER_ARCHIVO ENDM
 
 ENCABEZADO_FOOTER MACRO
     IMP_CAD_COLOR LINEA,80,0,0,0,08H,0
@@ -173,7 +213,7 @@ ESCRIBIRMENSAJE:
     CURSOR 11,13,0
     LEER_CADENA MENSAJE
     CURSOR 13,13,0
-    LEER_CADENA MENSAJE
+    LEER_CADENA MENSAJE2
     
     IMP_CAD_COLOR MSJDENUEZ, 28, 15, 10, 0, 0CFH, 0 
     IMP_CAD_COLOR MSJDENUEZ2, 28, 16, 10, 0, 0CFH, 0                                         
@@ -195,8 +235,143 @@ PREGUNTARDESTINATARIO:
     IMP_CAD_COLOR MSJDESTINATARIO, 14, 19, 10, 0, 0CFH, 0
     CURSOR 19,24,0
     LEER_CADENA DESTINATARIO
-        
 
+; GUARDAMOS LOS 2 MENSAJE EN UNO SOLO
+    MOV CX,35
+    MOV DI,0
+    MOV SI,2
+    MOV RW,0
+LOOP_COPIAR_CAD:
+    PUSH CX
+    
+        MOV AL,MENSAJE[SI]
+        MOV MENSAJER[DI],AL
+        CMP AL,0DH
+        JE SALIR
+        INC SI
+        INC DI
+        INC RW
+        
+    POP CX
+LOOP LOOP_COPIAR_CAD
+;ESPACIO EN EL MENSAJE RESULTANTE  
+SALIR:
+    MOV SI,RW
+    MOV MENSAJER[SI],20H
+    INC RW
+
+;MENSAJE2 A MENSAJER    
+    MOV CX,35
+    MOV SI,2
+    MOV DI,RW
+LOOP_COPIAR_CAD2:   
+    PUSH CX
+        
+        MOV AL,MENSAJE2[SI]
+        MOV MENSAJER[DI],AL
+        CMP AL,0DH
+        JE SALIR2
+        INC SI
+        INC DI
+        INC RW
+    
+    POP CX
+LOOP LOOP_COPIAR_CAD2 
+
+SALIR2:    
+    MOV SI,RW
+    MOV MENSAJER[SI],20H
+    INC RW  
+    
+    MOV CX,70
+LLENAR_MENSAJER:
+    PUSH CX
+        
+        MOV SI,RW
+        MOV MENSAJER[SI],20H
+        INC RW
+        CMP RW,71
+        JE GUARDAR_JOSE
+           
+    POP CX 
+LOOP LLENAR_MENSAJER
+    
+    
+;GUARDAMOS EL MENSAJE DEPENDIENDO DEL DESTINATARIO
+;JOSE
+GUARDAR_JOSE:
+    MOV CX,4
+    MOV SI,0
+    MOV DI,2
+CICLO_GUARDAR_JOSE:
+    PUSH CX
+        MOV DH,DESTINATARIO[DI]
+        MOV DL,NOMBREJOSE[SI] 
+        CMP DH,DL
+        JE SIGUELE_JOSE
+        JMP GUARDAR_GADYEL
+SIGUELE_JOSE:        
+    INC SI
+    INC DI
+    POP CX
+LOOP CICLO_GUARDAR_JOSE
+;ESCRIBIR EN EL ARCHIVO DE JOSE 
+    ABRIR_ARCHIVO RUTAJOSE,2
+    ESCRIBIR_ARCHIVO ID,71,MENSAJER
+    JMP UBICACION
+    
+;GADYEL    
+GUARDAR_GADYEL:    
+    MOV CX,4
+    MOV SI,0
+    MOV DI,2
+CICLO_GUARDAR_GADYEL:
+    PUSH CX
+        MOV DH,DESTINATARIO[DI]
+        MOV DL,NOMBREGADYEL[SI] 
+        CMP DH,DL
+        JE SIGUELE_GADYEL
+        JMP GUARDAR_GERRY
+SIGUELE_GADYEL:        
+    INC SI
+    INC DI
+    POP CX
+LOOP CICLO_GUARDAR_GADYEL
+;ESCRIBIR EN EL ARCHIVO 
+    ABRIR_ARCHIVO RUTAGADYEL,2
+    ESCRIBIR_ARCHIVO ID,71,MENSAJER
+    JMP UBICACION
+    
+    MOV AH, 3EH
+    MOV BX, ID
+    INT 21H 
+       
+    JMP UBICACION
+    
+;GERRY    
+GUARDAR_GERRY:    
+    MOV CX,5
+    MOV SI,0
+    MOV DI,2
+CICLO_GUARDAR_GERRY:
+    PUSH CX
+        MOV DH,DESTINATARIO[DI]
+        MOV DL,NOMBREGERRY[SI] 
+        CMP DH,DL
+        JE SIGUELE_GERRY
+        JMP PREGUNTARDESTINATARIO
+SIGUELE_GERRY:        
+    INC SI
+    INC DI
+    POP CX
+LOOP CICLO_GUARDAR_GERRY
+;ESCRIBIR EN EL ARCHIVO 
+    ABRIR_ARCHIVO RUTAGERRY,2
+    ESCRIBIR_ARCHIVO ID,71,MENSAJER
+    JMP UBICACION
+
+UBICACION:
+    
 FIN:
         MOV AX, 4C00H
         INT 21H
