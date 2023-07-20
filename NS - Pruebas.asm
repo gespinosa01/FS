@@ -1,10 +1,10 @@
-#start=stepper_motor.exe#
+#START=STEPPER_MOTOR.EXE#
 ;***********************************************
 ;   Nombre del proyecto:
 ;   FIRULAIS SOLOVINO
 ;   
 ;   Integrantes:
-;   1. Gadyel Josue Martï¿½nez Guzmï¿½n
+;   1. Gadyel Josue Martínez Guzmán
 ;   2. Gerardo Espinosa Rosas
 ;   3. Jose Manuel Vazquez Mendez
 ;   Presenta:
@@ -13,14 +13,14 @@
 ;FASE 1. MAQUETADO de SOFTWARE           -Fecha 13 julio 2023-
 ;------------------------------------------------------------- 
 ;INSTRUCCIONES:
-;   1.  Definir una paleta de colores, mï¿½ximo 3 colores
-;       cada pantalla, deberï¿½ estar alineada a la paleta
+;   1.  Definir una paleta de colores, máximo 3 colores
+;       cada pantalla, debería estar alineada a la paleta
 ;       de colores.
 ;   2.  Por equipo, definir un logotipo. Debe ser original.
-;   3.  Cada pantalla deberï¿½ tener el logotipo, un encabezado
-;       y un pie de pï¿½gina.
-;   4.  Cada pantalla deberï¿½ tener un fondo de algï¿½n caracter.
-;   5.  Definir el menï¿½, pantalla login, pantalla <1>.
+;   3.  Cada pantalla debería tener el logotipo, un encabezado
+;       y un pie de página.
+;   4.  Cada pantalla debería tener un fondo de algún caracter.
+;   5.  Definir el menú, pantalla login, pantalla <1>.
 ;**************************************************************
 .MODEL SMALL           
 .STACK
@@ -28,15 +28,15 @@
 ;******************* VARIABLES LOGIN *************************    
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
-    MSJCONTRASEï¿½A   DB  "CONTRASE",165,"A:    "    
+    MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
     USUARIO         DB  "  FIRULAIS"
-    CONTRASEï¿½A      DB  "  SOLOVINO" 
+    CONTRASEÑA      DB  "  SOLOVINO" 
     USUARIOC        DB  9, 0, 9 DUP(36)
-    CONTRASEï¿½AC     DB  9, 0, 9 DUP(36)
+    CONTRASEÑAC     DB  9, 0, 9 DUP(36)
     USUARIOINC      DB  "Ha introducido un usuario incorrecto";36
     USUARIOCOR      DB  "Usuario correcto                    ";36 
-    CONTRASEï¿½ACOR   DB  "Contrase",164,"a correcta                     ";40
-    CONTRASEï¿½AINC   DB  "Ha introducido una contrase",164,"a incorrecta";40
+    CONTRASEÑACOR   DB  "Contrase",164,"a correcta                     ";40
+    CONTRASEÑAINC   DB  "Ha introducido una contrase",164,"a incorrecta";40
     RENGLON         DB  0
     CONTADOR        DB  0
     LOGOG           DB  10,13,10,13,'                    ',219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,'    ',219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,'                   ',10,13
@@ -60,7 +60,7 @@
                     DB  '                                                                               ',10,13 
 ;***************************** FIN VARIABLES LOGIN ********************************************
 ;==============================================================================================
-;***************************** VARIABLES MENï¿½ *************************************************
+;***************************** VARIABLES MENÚ *************************************************
     MSJMENU   DB      '     FUNCIONALIDADES     '
     MSJFUNCION  DB      '[PRESIONA ENTER PARA CONTINUAR]';31
     MSJOPCION1  DB      '1.Enviar recursos        '
@@ -89,7 +89,7 @@
     LOGO        DB 10,13,'                    ___  ___                 ',10,13
                 DB '                    |  \/  |                 ',10,13
                 DB '                    | .  . | ___ _ __  _   _ ',10,13
-                DB '                    | |\/| |/ _ \ ï¿½_ \| | | |',10,13
+                DB '                    | |\/| |/ _ \  _ \| | | |',10,13
                 DB '                    | |  | |  __/ | | | |_| |',10,13
                 DB '                    \_|  |_/\___|_| |_|\__,_|',10,13         
 ;***************************  FIN VARIABLES MENU ******************************
@@ -129,23 +129,29 @@
 ;************************ FIN VARIABLES UBICACION *****************************
 ;==============================================================================
 ;************************** VARIABLES ENVIADO ********************************* 
-
-FIRULAIS        DB '                                         ______________  __  ____    ___    _________',10,13
-                DB '               / ____/  _/ __ \/ / / / /   /   |  /  _/ ___/',10,13
-                DB '              / /_   / // /_/ / / / / /   / /| |  / / \__ \ ',10,13
-                DB '             / __/ _/ // _, _/ /_/ / /___/ ___ |_/ / ___/ / ',10,13
-                DB '            /_/   /___/_/ |_|\____/_____/_/  |_/___//____/  ',10,13
-ENVIADO         DB '                                         _______   ___    _________    ____  ____ ',10,13
-                DB '               / ____/ | / / |  / /  _/   |  / __ \/ __ \',10,13
-                DB '              / __/ /  |/ /| | / // // /| | / / / / / / /',10,13
-                DB '             / /___/ /|  / | |/ // // ___ |/ /_/ / /_/ / ',10,13
-                DB '            /_____/_/ |_/  |___/___/_/  |_/_____/\____/  ',10,13
-LLEGADO         DB '                                                         __  _____       __    __    _______________    ____  ____ ',10,13
-                DB '               / / / /   |     / /   / /   / ____/ ____/   |  / __ \/ __ \',10,13
-                DB '              / /_/ / /| |    / /   / /   / __/ / / __/ /| | / / / / / / /',10,13
-                DB '             / __  / ___ |   / /___/ /___/ /___/ /_/ / ___ |/ /_/ / /_/ / ',10,13
-                DB '            /_/ /_/_/  |_|  /_____/_____/_____/\____/_/  |_/_____/\____/  ',10,13  
-
+    FIRULAIS        DB '______________  __  ____    ___    _________',10,13
+                    DB '               / ____/  _/ __ \/ / / / /   /   |  /  _/ ___/',10,13
+                    DB '              / /_   / // /_/ / / / / /   / /| |  / / \__ \ ',10,13
+                    DB '             / __/ _/ // _, _/ /_/ / /___/ ___ |_/ / ___/ / ',10,13
+                    DB '            /_/   /___/_/ |_|\____/_____/_/  |_/___//____/  ',10,13
+    ENVIADO         DB '_______   ___    _________    ____  ____ ',10,13
+                    DB '               / ____/ | / / |  / /  _/   |  / __ \/ __ \',10,13
+                    DB '              / __/ /  |/ /| | / // // /| | / / / / / / /',10,13
+                    DB '             / /___/ /|  / | |/ // // ___ |/ /_/ / /_/ / ',10,13
+                    DB '            /_____/_/ |_/  |___/___/_/  |_/_____/\____/  ',10,13
+    LLEGADO         DB '__  _____       __    __    _______________    ____  ____ ',10,13
+                    DB '               / / / /   |     / /   / /   / ____/ ____/   |  / __ \/ __ \',10,13
+                    DB '              / /_/ / /| |    / /   / /   / __/ / / __/ /| | / / / / / / /',10,13
+                    DB '             / __  / ___ |   / /___/ /___/ /___/ /_/ / ___ |/ /_/ / /_/ / ',10,13
+                    DB '            /_/ /_/_/  |_|  /_____/_____/_____/\____/_/  |_/_____/\____/  ',10,13  
+    VUELTA_HORARIO  DB  0000_0110B  ;6H - 6
+                    DB  0000_0100B  ;4H - 4
+                    DB  0000_0011B  ;3H - 3
+                    DB  0000_0010B  ;2H - 2
+    VUELTA_ANTI     DB 0000_0011B   ;3H - 3
+                    DB 0000_0001B   ;1H - 1
+                    DB 0000_0110B   ;6H - 6
+                    DB 0000_0010B   ;2H - 2                
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -210,7 +216,7 @@ LOGIN:
     MOV AX, @DATA
     MOV DS, AX
     MOV ES, AX
-    JMP VENTANA_ENVIADO
+    
 MOV CX,25
 FONDOLOGIN:
     PUSH CX
@@ -265,60 +271,59 @@ FIN_COMPARAR_USUARIO:
     
 USUARIOCORRECTO: 
     IMP_CAD_COLOR USUARIOCOR, 36, 21, 30, 0, 0F8H, 0
-    JMP CONTRASEï¿½A_INICIO
+    JMP CONTRASEÑA_INICIO
 
 USUARIOINCORRECTO:
     IMP_CAD_COLOR   USUARIOINC, 36, 21, 30, 0, 0FCH, 0
     JMP USUARIO_INICIO
 
 ;**********     SI EL USUARIO FUE CORRECTO ***********
-CONTRASEï¿½A_INICIO:
-IMP_CAD_COLOR   MSJCONTRASEï¿½A, 15, 22, 30, 0, 0F8H, 0
+CONTRASEÑA_INICIO:
+IMP_CAD_COLOR   MSJCONTRASEÑA, 15, 22, 30, 0, 0F8H, 0
 
 CURSOR 22, 46, 0
 
-LEER_CADENA CONTRASEï¿½AC
+LEER_CADENA CONTRASEÑAC
 
 MOV CX, 8
 MOV SI, 2
 MOV AX, 0
 MOV BX, 0
 MOV CONTADOR, 0
-COMPARAR_CONTRASEï¿½A:
-    MOV AL, CONTRASEï¿½AC[SI]
-    MOV BL, CONTRASEï¿½A[SI]
+COMPARAR_CONTRASEÑA:
+    MOV AL, CONTRASEÑAC[SI]
+    MOV BL, CONTRASEÑA[SI]
     CMP AL, BL
-    JE CMP_CONTRASEï¿½ACOR
-    JMP CMP_CONTRASEï¿½AINC
+    JE CMP_CONTRASEÑACOR
+    JMP CMP_CONTRASEÑAINC
     
-CMP_CONTRASEï¿½ACOR:
+CMP_CONTRASEÑACOR:
     INC CONTADOR
     INC SI    
-    LOOP COMPARAR_CONTRASEï¿½A
-    JMP FIN_COMPARAR_CONTRASEï¿½A
+    LOOP COMPARAR_CONTRASEÑA
+    JMP FIN_COMPARAR_CONTRASEÑA
     
-CMP_CONTRASEï¿½AINC:
+CMP_CONTRASEÑAINC:
     INC SI
-    LOOP COMPARAR_CONTRASEï¿½A
-    JMP FIN_COMPARAR_CONTRASEï¿½A
+    LOOP COMPARAR_CONTRASEÑA
+    JMP FIN_COMPARAR_CONTRASEÑA
     
-FIN_COMPARAR_CONTRASEï¿½A:
+FIN_COMPARAR_CONTRASEÑA:
     CMP CONTADOR, 8
-    JE  CONTRASEï¿½ACORRECTA
-    JMP CONTRASEï¿½AINCORRECTA
+    JE  CONTRASEÑACORRECTA
+    JMP CONTRASEÑAINCORRECTA
     
     
-CONTRASEï¿½ACORRECTA: 
-    IMP_CAD_COLOR CONTRASEï¿½ACOR, 40, 23, 30, 0, 0F8H, 0
-    NOP
+CONTRASEÑACORRECTA: 
+    IMP_CAD_COLOR CONTRASEÑACOR, 40, 23, 30, 0, 0F8H, 0
     JMP MENU
 
-CONTRASEï¿½AINCORRECTA:
-    IMP_CAD_COLOR   CONTRASEï¿½AINC, 40, 23, 30, 0, 0FCH, 0
-    JMP CONTRASEï¿½A_INICIO
+CONTRASEÑAINCORRECTA:
+    IMP_CAD_COLOR   CONTRASEÑAINC, 40, 23, 30, 0, 0FCH, 0
+    JMP CONTRASEÑA_INICIO
     
 ;=================================================================
-;                            MENï¿½
+;                            MENÚ
 ;=================================================================    
 MENU:
 MOV CX,25
@@ -545,10 +550,10 @@ REPEO:
     INT 21H
         MOV EO, AL
     CMP EO, 'E'
-    JE LOGIN
+    JE VENTANA_ENVIADO
     CMP EO, 'O'
-    JE LOGIN
-    JMP REPEO
+    JE VENTANA_ENVIADO
+JMP REPEO
 ;========================================================
 ;                   VENTANA ENVIADO/LLEGADO
 ;========================================================
@@ -565,8 +570,152 @@ LOOP FONDOENVIADO
 
 ENCABEZADO_Y_PIE
 
-IMP_CAD_COLOR  FIRULAIS, 335, 3, 15, 0, 0F0H, 0
-IMP_CAD_COLOR  ENVIADO, 405, 12, 15, 0, 0F0H, 0
+
+IMP_CAD_COLOR  FIRULAIS, 294, 5, 15, 0, 0F0H, 0
+IMP_CAD_COLOR  ENVIADO, 279, 12, 15, 0, 0F0H, 0
+
+;**** VUELTAS EN SENTIDO HORARIO ****
+;MOVEMOS A BX, VUELTA_HORARIO
+MOV BX, OFFSET VUELTA_HORARIO   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_HORARIO:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT1:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT1 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_HORARIO 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 8
+    JBE SIGUIENTE_PASO_HORARIO
+    
+;*** VUELTAS EN SENTIDO ANTIHORARIO ***
+;MOVEMOS A BX, VUELTA_ANTI
+MOV BX, OFFSET VUELTA_ANTI   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_ANTIHORARIO:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT2:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT2 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_ANTIHORARIO 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 5
+    JBE SIGUIENTE_PASO_ANTIHORARIO
+
+
+;**** VUELTAS EN SENTIDO HORARIO ****
+;MOVEMOS A BX, VUELTA_HORARIO
+MOV BX, OFFSET VUELTA_HORARIO   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_HORARIO1:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT3:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT3 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_HORARIO1 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 8
+    JBE SIGUIENTE_PASO_HORARIO1
+
+
+    IMP_CAD_COLOR   LLEGADO, 364, 12, 15, 0, 0F2H, 0
+    IMP_CAD_COLOR   MSJFUNCION,31,20,20,0,0F2H,0
+ENTER:
+    ;CURSOR ENTER
+    MOV AH,2
+    MOV DH,20
+    MOV DL,52
+    MOV BH,0
+    INT 10H
+    ;Esperar ENTER
+            MOV AH,0
+            INT 16H
+            MOV RASTREO, AH ;RECUPERAR
+  
+        CMP RASTREO, 1CH
+        JE IMPRIMIR_CADENA
+JMP ENTER
+;======================================================
+;           IMPRIMIR_MENSAJE
+;======================================================
+IMPRIMIR_CADENA:
+     
+ MOV CX,0  ; LIMPIAR CX
+ MOV CL,MENSAJE[1] ;CANTIDAD DE CARACTERES A IMPRIMIR DE <MENSAJE>
+ MOV SI,2 
+IMPRIMIR:    
+       MOV AH, 5       ; INTERRUPCION PARA IMPRIMIR
+       MOV DL, MENSAJE[SI] ;CARACTER A  IMPRIMIR  
+       INT 21H
+       INC SI
+LOOP IMPRIMIR 
+    
+    MOV AH, 5       ; IBTERRUPCION PARA IMPRIMIR
+    MOV DL, 0AH ;caracter a imprimir  
+    INT 21H     
+       
+    MOV AH, 5       ; IBTERRUPCION PARA IMPRIMIR
+    MOV DL, 0DH ;caracter a imprimir  
+    INT 21H  ; total de caracteres 
+            
+MOV CX,0  ;LIMPIAR CX
+MOV CL,MENSAJE2[1] ;CANTIDAD DE CARACTERES A IMPRIMIR DE <MENSAJE2> 
+MOV SI,2
+IMPRIMIR2:    
+       MOV AH,5       ; IBTERRUPCION PARA IMPRIMIR
+       MOV DL,MENSAJE2[SI] ;caracter a imprimir  
+       INT 21H
+       INC SI
+LOOP IMPRIMIR2
+
 
 
 FIN:
