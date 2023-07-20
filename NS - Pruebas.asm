@@ -4,7 +4,7 @@
 ;   FIRULAIS SOLOVINO
 ;   
 ;   Integrantes:
-;   1. Gadyel Josue Martínez Guzmán
+;   1. Gadyel Josue Martï¿½nez Guzmï¿½n
 ;   2. Gerardo Espinosa Rosas
 ;   3. Jose Manuel Vazquez Mendez
 ;   Presenta:
@@ -13,14 +13,14 @@
 ;FASE 1. MAQUETADO de SOFTWARE           -Fecha 13 julio 2023-
 ;------------------------------------------------------------- 
 ;INSTRUCCIONES:
-;   1.  Definir una paleta de colores, máximo 3 colores
-;       cada pantalla, deberá estar alineada a la paleta
+;   1.  Definir una paleta de colores, mï¿½ximo 3 colores
+;       cada pantalla, deberï¿½ estar alineada a la paleta
 ;       de colores.
 ;   2.  Por equipo, definir un logotipo. Debe ser original.
-;   3.  Cada pantalla deberá tener el logotipo, un encabezado
-;       y un pie de página.
-;   4.  Cada pantalla deberá tener un fondo de algún caracter.
-;   5.  Definir el menú, pantalla login, pantalla <1>.
+;   3.  Cada pantalla deberï¿½ tener el logotipo, un encabezado
+;       y un pie de pï¿½gina.
+;   4.  Cada pantalla deberï¿½ tener un fondo de algï¿½n caracter.
+;   5.  Definir el menï¿½, pantalla login, pantalla <1>.
 ;**************************************************************
 .MODEL SMALL           
 .STACK
@@ -28,15 +28,15 @@
 ;******************* VARIABLES LOGIN *************************    
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
-    MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
+    MSJCONTRASEï¿½A   DB  "CONTRASE",165,"A:    "    
     USUARIO         DB  "  FIRULAIS"
-    CONTRASEÑA      DB  "  SOLOVINO" 
+    CONTRASEï¿½A      DB  "  SOLOVINO" 
     USUARIOC        DB  9, 0, 9 DUP(36)
-    CONTRASEÑAC     DB  9, 0, 9 DUP(36)
+    CONTRASEï¿½AC     DB  9, 0, 9 DUP(36)
     USUARIOINC      DB  "Ha introducido un usuario incorrecto";36
     USUARIOCOR      DB  "Usuario correcto                    ";36 
-    CONTRASEÑACOR   DB  "Contrase",164,"a correcta                     ";40
-    CONTRASEÑAINC   DB  "Ha introducido una contrase",164,"a incorrecta";40
+    CONTRASEï¿½ACOR   DB  "Contrase",164,"a correcta                     ";40
+    CONTRASEï¿½AINC   DB  "Ha introducido una contrase",164,"a incorrecta";40
     RENGLON         DB  0
     CONTADOR        DB  0
     LOGOG           DB  10,13,10,13,'                    ',219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,'    ',219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,'                   ',10,13
@@ -60,7 +60,7 @@
                     DB  '                                                                               ',10,13 
 ;***************************** FIN VARIABLES LOGIN ********************************************
 ;==============================================================================================
-;***************************** VARIABLES MENÚ *************************************************
+;***************************** VARIABLES MENï¿½ *************************************************
     MSJMENU   DB      '     FUNCIONALIDADES     '
     MSJFUNCION  DB      '[PRESIONA ENTER PARA CONTINUAR]';31
     MSJOPCION1  DB      '1.Enviar recursos        '
@@ -89,7 +89,7 @@
     LOGO        DB 10,13,'                    ___  ___                 ',10,13
                 DB '                    |  \/  |                 ',10,13
                 DB '                    | .  . | ___ _ __  _   _ ',10,13
-                DB '                    | |\/| |/ _ \ ´_ \| | | |',10,13
+                DB '                    | |\/| |/ _ \ ï¿½_ \| | | |',10,13
                 DB '                    | |  | |  __/ | | | |_| |',10,13
                 DB '                    \_|  |_/\___|_| |_|\__,_|',10,13         
 ;***************************  FIN VARIABLES MENU ******************************
@@ -266,60 +266,60 @@ FIN_COMPARAR_USUARIO:
     
 USUARIOCORRECTO: 
     IMP_CAD_COLOR USUARIOCOR, 36, 21, 30, 0, 0F8H, 0
-    JMP CONTRASEÑA_INICIO
+    JMP CONTRASEï¿½A_INICIO
 
 USUARIOINCORRECTO:
     IMP_CAD_COLOR   USUARIOINC, 36, 21, 30, 0, 0FCH, 0
     JMP USUARIO_INICIO
 
 ;**********     SI EL USUARIO FUE CORRECTO ***********
-CONTRASEÑA_INICIO:
-IMP_CAD_COLOR   MSJCONTRASEÑA, 15, 22, 30, 0, 0F8H, 0
+CONTRASEï¿½A_INICIO:
+IMP_CAD_COLOR   MSJCONTRASEï¿½A, 15, 22, 30, 0, 0F8H, 0
 
 CURSOR 22, 46, 0
 
-LEER_CADENA CONTRASEÑAC
+LEER_CADENA CONTRASEï¿½AC
 
 MOV CX, 8
 MOV SI, 2
 MOV AX, 0
 MOV BX, 0
 MOV CONTADOR, 0
-COMPARAR_CONTRASEÑA:
-    MOV AL, CONTRASEÑAC[SI]
-    MOV BL, CONTRASEÑA[SI]
+COMPARAR_CONTRASEï¿½A:
+    MOV AL, CONTRASEï¿½AC[SI]
+    MOV BL, CONTRASEï¿½A[SI]
     CMP AL, BL
-    JE CMP_CONTRASEÑACOR
-    JMP CMP_CONTRASEÑAINC
+    JE CMP_CONTRASEï¿½ACOR
+    JMP CMP_CONTRASEï¿½AINC
     
-CMP_CONTRASEÑACOR:
+CMP_CONTRASEï¿½ACOR:
     INC CONTADOR
     INC SI    
-    LOOP COMPARAR_CONTRASEÑA
-    JMP FIN_COMPARAR_CONTRASEÑA
+    LOOP COMPARAR_CONTRASEï¿½A
+    JMP FIN_COMPARAR_CONTRASEï¿½A
     
-CMP_CONTRASEÑAINC:
+CMP_CONTRASEï¿½AINC:
     INC SI
-    LOOP COMPARAR_CONTRASEÑA
-    JMP FIN_COMPARAR_CONTRASEÑA
+    LOOP COMPARAR_CONTRASEï¿½A
+    JMP FIN_COMPARAR_CONTRASEï¿½A
     
-FIN_COMPARAR_CONTRASEÑA:
+FIN_COMPARAR_CONTRASEï¿½A:
     CMP CONTADOR, 8
-    JE  CONTRASEÑACORRECTA
-    JMP CONTRASEÑAINCORRECTA
+    JE  CONTRASEï¿½ACORRECTA
+    JMP CONTRASEï¿½AINCORRECTA
     
     
-CONTRASEÑACORRECTA: 
-    IMP_CAD_COLOR CONTRASEÑACOR, 40, 23, 30, 0, 0F8H, 0
+CONTRASEï¿½ACORRECTA: 
+    IMP_CAD_COLOR CONTRASEï¿½ACOR, 40, 23, 30, 0, 0F8H, 0
     NOP
     JMP MENU
 
-CONTRASEÑAINCORRECTA:
-    IMP_CAD_COLOR   CONTRASEÑAINC, 40, 23, 30, 0, 0FCH, 0
-    JMP CONTRASEÑA_INICIO
+CONTRASEï¿½AINCORRECTA:
+    IMP_CAD_COLOR   CONTRASEï¿½AINC, 40, 23, 30, 0, 0FCH, 0
+    JMP CONTRASEï¿½A_INICIO
     
 ;=================================================================
-;                            MENÚ
+;                            MENï¿½
 ;=================================================================    
 MENU:
 MOV CX,25
@@ -472,7 +472,7 @@ ESCRIBIRMENSAJE:
     CURSOR 12,15,0
     LEER_CADENA MENSAJE
     CURSOR 14,15,0
-    LEER_CADENA MENSAJE
+    LEER_CADENA MENSAJE2
     
     IMP_CAD_COLOR MSJDENUEVO, 28, 16, 15, 0, 0CFH, 0 
     IMP_CAD_COLOR MSJDENUEVO2, 28, 17, 15, 0, 0CFH, 0                                         
