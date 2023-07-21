@@ -1,4 +1,5 @@
 #START=STEPPER_MOTOR.EXE#
+#START=THERMOMETER.EXE#
 ;***********************************************
 ;   Nombre del proyecto:
 ;   FIRULAIS SOLOVINO
@@ -239,19 +240,6 @@ CREAR_ARCHIVO   MACRO RUTA, TIPO,
         MOV ID, AX   ;REGRESA EL <ID> DEL ARCHIVO    
 CREAR_ARCHIVO   ENDM    
 
-PINTAR_FONDO MACRO COLOR
-    MOV CX,25
-    MOV RENGLON,0
-FONDO:
-    PUSH CX
-    
-        IMP_CAD_COLOR LINEA,80,RENGLON,0,0,COLOR,0       
-        INC RENGLON
-        
-    POP CX
-LOOP FONDO
-PINTAR_FONDO ENDM
-
 ENCABEZADO_Y_PIE  MACRO
 ;********************** ENCABEZADO ******************************* 
     IMP_CAD_COLOR LINEA, 80, 0, 0, 0, 08H,0
@@ -288,7 +276,13 @@ LOGIN:
     MOV DS, AX
     MOV ES, AX
     
-    PINTAR_FONDO 8FH
+MOV CX,25
+FONDOLOGIN:
+    PUSH CX
+    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,8FH,0       
+        INC RENGLON
+    POP CX
+LOOP FONDOLOGIN
 
 LOGO_LOGIN:
     MOV AH,19
