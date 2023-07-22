@@ -201,6 +201,28 @@
         BMENSAJE    DB   0
         BSUMINISTRO DB   0                                                                                      
 ;*******************************FIN VARIABLES MENSAJE**************************
+;******************************* VARIABLES TERMOMETRO**************************
+        TEMPERATURA DB  0
+        MSJENEMIGO  DB  ' _____ _   _  ________  ________ _____ _____ ',10,13;45
+                    DB  '                 |  ___| \ | ||  ___|  \/  |_   _|  __ \  _  |',10,13
+                    DB  '                 | |__ |  \| || |__ | .  . | | | | |  \/ | | |',10,13
+                    DB  '                 |  __|| . ` ||  __|| |\/| | | | | | __| | | |',10,13
+                    DB  '                 | |___| |\  || |___| |  | |_| |_| |_\ \ \_/ /',10,13
+                    DB  '                 \____/\_| \_/\____/\_|  |_/\___/ \____/\___/ ' 
+        MSJDETECTADO DB '______ _____ _____ _____ _____ _____ ___ ______ _____ ',10,13;54
+                    DB  '             |  _  \  ___|_   _|  ___/  __ \_   _/ _ \|  _  \  _  |',10,13
+                    DB  '             | | | | |__   | | | |__ | /  \/ | |/ /_\ \ | | | | | |',10,13
+                    DB  '             | | | |  __|  | | |  __|| |     | ||  _  | | | | | | |',10,13
+                    DB  '             | |/ /| |___  | | | |___| \__/\ | || | | | |/ /\ \_/ /',10,13
+                    DB  '             |___/ \____/  \_/ \____/ \____/ \_/\_| |_/___/  \___/ '
+        MSJESCAPANDO DB ' _____ _____ _____   ___  ______  ___   _   _______ _____ ',10,13
+                    DB  '           |  ___/  ___/  __ \ / _ \ | ___ \/ _ \ | \ | |  _  \  _  |',10,13;58
+                    DB  '           | |__ \ `--.| /  \// /_\ \| |_/ / /_\ \|  \| | | | | | | |',10,13
+                    DB  '           |  __| `--. \ |    |  _  ||  __/|  _  || . ` | | | | | | |',10,13
+                    DB  '           | |___/\__/ / \__/\| | | || |   | | | || |\  | |/ /\ \_/ /',10,13
+                    DB  '           \____/\____/ \____/\_| |_/\_|   \_| |_/\_| \_/___/  \___/ ',10,13
+                     
+;******************************* FIN VARIABLES TERMOMETRO *********************
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -307,8 +329,8 @@ ENCABEZADO_Y_PIE ENDM
 LOGIN:
     MOV AX, @DATA
     MOV DS, AX
-    MOV ES, AX
-        JMP VENTANA_MENSAJE
+    MOV ES, AX    
+    
 MOV COLOR, 8FH
 CALL PINTAR_FONDO 
 
@@ -538,11 +560,14 @@ RESPUESTA1:
     MOV R,AL 
     CMP AL,'1'
     JE ESCRIBIRMENSAJE
+    
+    MOV BMENSAJE,0
     CMP AL,'2'
-    JE FIN
+    JE UBICACION
     JMP RESPUESTA1
     
     ESCRIBIRMENSAJE:
+    MOV BMENSAJE,1
     IMP_CAD_COLOR PEDIRMSJ, 20, 9, 13, 0, 0CFH, 0
     IMP_CAD_COLOR ESPACIOMSJ, 35, 11, 13, 0, 0CFH, 0
     IMP_CAD_COLOR ESPACIOMSJ, 35, 13, 13, 0, 0CFH, 0
@@ -829,7 +854,32 @@ SIGUIENTE_PASO_HORARIO:
     INC CONTADOR
     CMP CONTADOR, 8
     JBE SIGUIENTE_PASO_HORARIO
+
+;========================================================
+;                   TERMOMETRO
+;========================================================  
+    MOV COLOR, 0F0H
+    CALL PINTAR_FONDO
+#START=THERMOMETER.EXE#;ABRIMOS EL TERMOMETRO
+    MOV AL,1    
+    OUT 127,AL;ENCENDEMOS EL TERMOMETRO
+    CALL TECLA;ESPERAMOS A UNA TECLA
     
+    IN AL, 125  ;
+    MOV TEMPERATURA,AL;CAPTURAMOS LA TEMPERATURA LEIDA
+    
+    CMP TEMPERATURA,30
+    JB CONTINUANDO_VUELTAS
+
+    IMP_CAD_COLOR MSJENEMIGO, 365, 3, 17, 0, 0CH, 0
+    IMP_CAD_COLOR MSJDETECTADO, 399, 9, 13, 0, 0CH, 0
+    IMP_CAD_COLOR MSJESCAPANDO, 413, 15, 11, 0, 0CH, 0
+
+CONTINUANDO_VUELTAS:
+;========================================================
+;                   FIN TERMOMETRO
+;========================================================
+     
 ;*** VUELTAS EN SENTIDO ANTIHORARIO ***
 ;MOVEMOS A BX, VUELTA_ANTI
 MOV BX, OFFSET VUELTA_ANTI   ;INICIAMOS DESDE LA POSICION
@@ -891,9 +941,13 @@ SIGUIENTE_PASO_HORARIO1:
     CMP CONTADOR, 8
     JBE SIGUIENTE_PASO_HORARIO1
 
-
+    MOV COLOR, 0FH
+    CALL PINTAR_FONDO
+    
+    IMP_CAD_COLOR   FIRULAIS, 294, 5, 15, 0, 0F0H, 0
     IMP_CAD_COLOR   LLEGADO, 364, 12, 15, 0, 0F2H, 0
     IMP_CAD_COLOR   MSJFUNCION,31,20,20,0,0F2H,0
+    
 ENTER:
     ;CURSOR ENTER
     MOV AH,2
@@ -913,6 +967,9 @@ JMP ENTER
 ;               VENTANA MENSAJE
 ;==========================================================
 VENTANA_MENSAJE:
+    CMP BMENSAJE,0
+    JE NO_IMPRIMIR_MENSAJE
+    
     MOV COLOR, 0FCH
     CALL PINTAR_FONDO
 
@@ -962,6 +1019,15 @@ IMPRIMIR2:
 LOOP IMPRIMIR2
 
 
+NO_IMPRIMIR_MENSAJE:
+
+
+
+
+
+
+
+
 
 
 FIN:
@@ -980,6 +1046,13 @@ LOOP FONDO
 RET
 PINTAR_FONDO ENDP
 ;***************************************************
+TECLA PROC
+    MOV AH,0
+    INT 16H
+    
+    RET ;RETURN
+ENDP
+;***************************************************
 END
 
 
@@ -992,4 +1065,9 @@ END
 
 
 
-       
+        
+
+
+
+
+        
