@@ -1,5 +1,4 @@
 #START=STEPPER_MOTOR.EXE#
-#START=THERMOMETER.EXE#
 ;***********************************************
 ;   Nombre del proyecto:
 ;   FIRULAIS SOLOVINO
@@ -27,6 +26,7 @@
 .STACK
 .DATA
 ;******************* VARIABLES LOGIN *************************    
+    COLOR           DB  0
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
     MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
@@ -169,6 +169,60 @@
                     DB 0000_0001B   ;1H - 1
                     DB 0000_0110B   ;6H - 6
                     DB 0000_0010B   ;2H - 2                
+;******************************** FIN VARIABLES ENVIADO ***********************
+;==============================================================================
+;*********************************VARIABLES MENSAJE****************************
+    IMGMENSAJE      DB   '  @@@@@@@@@@@@@@@@@@@@@@@@@    ';31
+                    DB   '  @@                     @@    '
+                    DB   '  @@   @@@@@@            @@    '
+                    DB   '  @@                     @@    '
+                    DB   '  @@                     @@    '
+                    DB   '  @@   @@@@@@@@@@@@@@    @@    '
+                    DB   '@@@@@                     @@@@@'
+                    DB   '@@@  @@@    @@@@@@@@.   @@@@@@@'
+                    DB   '@@      @@@.         (@@@    @@'
+                    DB   '@@         @@@     @@@       @@'
+                    DB   '@@           @@ @@@&         @@'
+                    DB   '@@      @@@@@@( #@@@@@@      @@'
+                    DB   '@@    @@@@           @@@@    @@'
+                    DB   '@@ @@@@               @@@@   @@'
+                    DB   '@@@@@                   @@@@ @@'
+                    DB   '@@@                      @@@@@@'
+                    DB   '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+        MSJTIENE    DB   '  _________________   _______     __  ___   __ ';47
+                    DB   ' /_  __/  _/ ____/ | / / ___/    / / / / | / / '
+                    DB   '  / /  / // __/ /  |/ / __/     / / / /  |/ /  '
+                    DB   ' / / _/ // /___/ /|  / /___    / /_/ / /|  /   '
+                    DB   '/_/ /___/_____/_/ |_/_____/    \____/_/_|_/    '
+        MSJMENSAJE  DB   '   /  |/  / ____/ | / / ___//   |     / / ____/'
+                    DB   '  / /|_/ / __/ /  |/ /\__ \/ /| |__  / / __/   '
+                    DB   ' / /  / / /___/ /|  /___/ / ___ / /_/ / /___   '
+                    DB   '/_/  /_/_____/_/ |_//____/_/  |_\____/_____/   '
+        BMENSAJE    DB   0
+        BSUMINISTRO DB   0                                                                                      
+;*******************************FIN VARIABLES MENSAJE************************** 
+;******************************* VARIABLES TERMOMETRO**************************
+        TEMPERATURA DB  0
+        MSJENEMIGO  DB  ' _____ _   _  ________  ________ _____ _____ ',10,13;45
+                    DB  '                 |  ___| \ | ||  ___|  \/  |_   _|  __ \  _  |',10,13
+                    DB  '                 | |__ |  \| || |__ | .  . | | | | |  \/ | | |',10,13
+                    DB  '                 |  __|| . ` ||  __|| |\/| | | | | | __| | | |',10,13
+                    DB  '                 | |___| |\  || |___| |  | |_| |_| |_\ \ \_/ /',10,13
+                    DB  '                 \____/\_| \_/\____/\_|  |_/\___/ \____/\___/ ' 
+        MSJDETECTADO DB '______ _____ _____ _____ _____ _____ ___ ______ _____ ',10,13;54
+                    DB  '             |  _  \  ___|_   _|  ___/  __ \_   _/ _ \|  _  \  _  |',10,13
+                    DB  '             | | | | |__   | | | |__ | /  \/ | |/ /_\ \ | | | | | |',10,13
+                    DB  '             | | | |  __|  | | |  __|| |     | ||  _  | | | | | | |',10,13
+                    DB  '             | |/ /| |___  | | | |___| \__/\ | || | | | |/ /\ \_/ /',10,13
+                    DB  '             |___/ \____/  \_/ \____/ \____/ \_/\_| |_/___/  \___/ '
+        MSJESCAPANDO DB ' _____ _____ _____   ___  ______  ___   _   _______ _____ ',10,13
+                    DB  '           |  ___/  ___/  __ \ / _ \ | ___ \/ _ \ | \ | |  _  \  _  |',10,13;58
+                    DB  '           | |__ \ `--.| /  \// /_\ \| |_/ / /_\ \|  \| | | | | | | |',10,13
+                    DB  '           |  __| `--. \ |    |  _  ||  __/|  _  || . ` | | | | | | |',10,13
+                    DB  '           | |___/\__/ / \__/\| | | || |   | | | || |\  | |/ /\ \_/ /',10,13
+                    DB  '           \____/\____/ \____/\_| |_/\_|   \_| |_/\_| \_/___/  \___/ ',10,13
+                     
+;******************************* FIN VARIABLES TERMOMETRO *********************
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -240,6 +294,7 @@ CREAR_ARCHIVO   MACRO RUTA, TIPO,
         MOV ID, AX   ;REGRESA EL <ID> DEL ARCHIVO    
 CREAR_ARCHIVO   ENDM    
 
+
 ENCABEZADO_Y_PIE  MACRO
 ;********************** ENCABEZADO ******************************* 
     IMP_CAD_COLOR LINEA, 80, 0, 0, 0, 08H,0
@@ -275,431 +330,201 @@ LOGIN:
     MOV AX, @DATA
     MOV DS, AX
     MOV ES, AX
-    
-MOV CX,25
-FONDOLOGIN:
-    PUSH CX
-    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,8FH,0       
-        INC RENGLON
-    POP CX
-LOOP FONDOLOGIN
 
-LOGO_LOGIN:
-    MOV AH,19
-    LEA BP,LOGOG
-    MOV CX,1360
-    MOV DH,0    ;renglon
-    MOV DL,0    ;columna
-    MOV AL,0    ;modo
-    MOV BH,0
-    MOV BL,0F8H
-    INT 10H
-
-USUARIO_INICIO:
-IMP_CAD_COLOR   MSJUSUARIO, 15, 20, 30, 0, 0F8H, 0
-
-CURSOR 20, 46, 0
-LEER_CADENA USUARIOC
-
-MOV CONTADOR, 0
-MOV CX, 8
-MOV SI, 2
-COMPARAR_USUARIO:
-    MOV AL, USUARIOC[SI]
-    MOV BL, USUARIO[SI]
-    CMP AL, BL
-    JE CMP_USUARIOCOR
-    JMP CMP_USUARIOINC
-    
-CMP_USUARIOCOR:
-    INC CONTADOR
-    INC SI    
-    LOOP COMPARAR_USUARIO
-    JMP FIN_COMPARAR_USUARIO
-    
-CMP_USUARIOINC:
-    INC SI
-    LOOP COMPARAR_USUARIO
-    JMP FIN_COMPARAR_USUARIO
-    
-FIN_COMPARAR_USUARIO:
-    CMP CONTADOR, 8
-    JE  USUARIOCORRECTO
-    JMP USUARIOINCORRECTO
-    
-    
-USUARIOCORRECTO: 
-    IMP_CAD_COLOR USUARIOCOR, 36, 21, 30, 0, 0F8H, 0
-    JMP CONTRASEÑA_INICIO
-
-USUARIOINCORRECTO:
-    IMP_CAD_COLOR   USUARIOINC, 36, 21, 30, 0, 0FCH, 0
-    JMP USUARIO_INICIO
-
-;**********     SI EL USUARIO FUE CORRECTO ***********
-CONTRASEÑA_INICIO:
-IMP_CAD_COLOR   MSJCONTRASEÑA, 15, 22, 30, 0, 0F8H, 0
-
-CURSOR 22, 46, 0
-
-LEER_CADENA CONTRASEÑAC
-
-MOV CX, 8
-MOV SI, 2
-MOV AX, 0
-MOV BX, 0
-MOV CONTADOR, 0
-COMPARAR_CONTRASEÑA:
-    MOV AL, CONTRASEÑAC[SI]
-    MOV BL, CONTRASEÑA[SI]
-    CMP AL, BL
-    JE CMP_CONTRASEÑACOR
-    JMP CMP_CONTRASEÑAINC
-    
-CMP_CONTRASEÑACOR:
-    INC CONTADOR
-    INC SI    
-    LOOP COMPARAR_CONTRASEÑA
-    JMP FIN_COMPARAR_CONTRASEÑA
-    
-CMP_CONTRASEÑAINC:
-    INC SI
-    LOOP COMPARAR_CONTRASEÑA
-    JMP FIN_COMPARAR_CONTRASEÑA
-    
-FIN_COMPARAR_CONTRASEÑA:
-    CMP CONTADOR, 8
-    JE  CONTRASEÑACORRECTA
-    JMP CONTRASEÑAINCORRECTA
-    
-    
-CONTRASEÑACORRECTA: 
-    IMP_CAD_COLOR CONTRASEÑACOR, 40, 23, 30, 0, 0F8H, 0
-    JMP MENU
-
-CONTRASEÑAINCORRECTA:
-    IMP_CAD_COLOR   CONTRASEÑAINC, 40, 23, 30, 0, 0FCH, 0
-    JMP CONTRASEÑA_INICIO
-    
-;=================================================================
-;                            MENÚ
-;=================================================================    
-MENU:
+;========================================================
+;                   VENTANA ENVIADO/LLEGADO
+;========================================================
+VENTANA_ENVIADO:
 MOV CX,25
 MOV RENGLON, 0
-FONDOMENU:
-    PUSH CX
-    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 0FCH, 0       
-        INC RENGLON
-    POP CX
-LOOP FONDOMENU
+
+MOV COLOR, 0FH
+CALL PINTAR_FONDO 
+
 
 ENCABEZADO_Y_PIE
 
-;IMPRIMIR LOGO
-    MOV AH, 19
-    LEA BP, LOGOP
-    MOV CX, 794
-    MOV DH, 3    ;renglon
-    MOV DL, 55    ;columna
-    MOV AL, 0    ;modo
-    MOV BH, 0
-    MOV BL, 0CFH
-    INT 10H
 
-;IMPRIMIR MENU
-    MOV AH, 19
-    LEA BP, LOGO
-    MOV CX, 284
-    MOV DH, 3    
-    MOV DL, 40    
-    MOV AL, 0    
-    MOV BH, 0
-    MOV BL, 0CFH
-    INT 10H 
+IMP_CAD_COLOR  FIRULAIS, 294, 5, 15, 0, 0F0H, 0
+IMP_CAD_COLOR  ENVIADO, 279, 12, 15, 0, 0F0H, 0
+
+;**** VUELTAS EN SENTIDO HORARIO ****
+;MOVEMOS A BX, VUELTA_HORARIO
+MOV BX, OFFSET VUELTA_HORARIO   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_HORARIO:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT1:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT1 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_HORARIO 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 8
+    JBE SIGUIENTE_PASO_HORARIO
+
+
+;TERMOMETRO IDEA
+    MOV COLOR, 0FH
+    CALL PINTAR_FONDO
+#START=THERMOMETER.EXE#;ABRIMOS EL TERMOMETRO
+    MOV AL,1    
+    OUT 127,AL;ENCENDEMOS EL TERMOMETRO
+    CALL TECLA;ESPERAMOS A UNA TECLA
     
-        IMP_CAD_COLOR MSJMENU,25,12,18,0,0CFH,0
-        IMP_CAD_COLOR MSJFUNCION,25,20,20,0,0CFH,0
-        IMP_CAD_COLOR msjOpcion1,25,14,20,0,0CFH,0
-        IMP_CAD_COLOR msjOpcion2,25,16,20,0,0CFH,0
-        IMP_CAD_COLOR msjOpcion3,25,18,20,0,0CFH,0
-        IMP_CAD_COLOR msjFuncion,31,20,20,0,0CFH,0
-        MOV AH,2
-        MOV DH,20
-        MOV DL,90
-        MOV BH,0
-        INT 10H
-        ;Esperar ENTER
+    IN AL, 125  ;
+    MOV TEMPERATURA,AL;CAPTURAMOS LA TEMPERATURA LEIDA
+    
+    CMP TEMPERATURA,30
+    JB CONTINUANDO_VUELTAS
+
+    IMP_CAD_COLOR MSJENEMIGO, 365, 3, 17, 0, 0F0H, 0
+    IMP_CAD_COLOR MSJDETECTADO, 399, 9, 13, 0, 0F0H, 0
+    IMP_CAD_COLOR MSJESCAPANDO, 413, 15, 11, 0, 0F0H, 0
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+CONTINUANDO_VUELTAS:
+ 
+    
+;*** VUELTAS EN SENTIDO ANTIHORARIO ***
+;MOVEMOS A BX, VUELTA_ANTI
+MOV BX, OFFSET VUELTA_ANTI   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_ANTIHORARIO:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT2:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT2 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_ANTIHORARIO 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 5
+    JBE SIGUIENTE_PASO_ANTIHORARIO
+
+
+;**** VUELTAS EN SENTIDO HORARIO ****
+;MOVEMOS A BX, VUELTA_HORARIO
+MOV BX, OFFSET VUELTA_HORARIO   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_HORARIO1:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+    ;ESTÉ FUNCIONANDO CORRECTAMENTE
+    WAIT3:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT3 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+    ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+    ;INCREMENTA LA POSICIÓN
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DIÓ LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                ;A LA POSICIÓN INICIAL
+               
+    JC  SIGUIENTE_PASO_HORARIO1 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 8
+    JBE SIGUIENTE_PASO_HORARIO1
+
+
+    IMP_CAD_COLOR   LLEGADO, 364, 12, 15, 0, 0F2H, 0
+    IMP_CAD_COLOR   MSJFUNCION,31,20,20,0,0F2H,0
+ENTER:
+    ;CURSOR ENTER
+    MOV AH,2
+    MOV DH,20
+    MOV DL,52
+    MOV BH,0
+    INT 10H
+    ;Esperar ENTER
             MOV AH,0
             INT 16H
             MOV RASTREO, AH ;RECUPERAR
   
         CMP RASTREO, 1CH
-        JE VENTANARECURSOS
-;==========================================================
-;                   VENTANA RECURSOS
-;==========================================================
-VENTANARECURSOS:
-MOV CX,25
-MOV RENGLON, 0
-FONDOVENTANARECURSOS:
-    PUSH CX
-    IMP_CAD_COLOR linea,80,RENGLON,0,0,0FCH,0       
+;        JE IMPRIMIR_MENSAJE
+JMP ENTER
+;======================================================
+FIN:
+        MOV AX, 4C00H
+        INT 21H
+;************** SECCION DE PROCEDIMIENTOS **********       
+PINTAR_FONDO PROC
+    MOV CX,25
+    MOV RENGLON,0
+FONDO:
+    PUSH CX    
+        IMP_CAD_COLOR LINEA,80,RENGLON,0,0,COLOR,0       
         INC RENGLON
     POP CX
-LOOP FONDOVENTANARECURSOS
-
-ENCABEZADO_Y_PIE
-
-;IMPRIMIR LOGO
-    MOV AH, 19
-    LEA BP, LOGOP
-    MOV CX, 794
-    MOV DH, 3    ;renglon
-    MOV DL, 55    ;columna
-    MOV AL, 0    ;modo
-    MOV BH, 0
-    MOV BL, 0CFH
-    INT 10H
+LOOP FONDO
+RET
+PINTAR_FONDO ENDP
+;***************************************************
+TECLA PROC
+    MOV AH,0
+    INT 16H
     
-    ;imprimir menu
-        IMP_CAD_COLOR MSJRECURSOS,31,5,16,0,0CFH,0 
-        IMP_CAD_COLOR msjpregunta,31,10,10,0,0CFH,0
-        IMP_CAD_COLOR msjSi,31,14,10,0,0CFH,0
-        IMP_CAD_COLOR msjNo,31,16,10,0,0CFH,0
-
-CICLORECURSO:       
-        ;COLOCAR CURSOR
-        MOV AH,2
-        MOV DH,10
-        MOV DL,35
-        MOV BH,0
-        INT 10H
-        ;Esperar tecla
-        MOV AH,1
-        INT 21H
-            MOV OPCION, AL
-        CMP OPCION, '1'
-        JE INICIO_MENSAJE
-        CMP OPCION, '2'
-        JE INICIO_MENSAJE
-JMP CICLORECURSO
-;==========================================================
-;                     VENTANA MENSAJE
-;==========================================================       
-INICIO_MENSAJE:
-MOV CX,25
-    
-MOV RENGLON, 0
-FONDOMENSAJE:
-    PUSH CX
-    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,0FCH,0
-        INT 10H        
-        INC RENGLON
-    POP CX
-LOOP FONDOMENSAJE
-
-ENCABEZADO_Y_PIE
-
-;IMPRIMIR LOGO
-    MOV AH, 19
-    LEA BP, LOGOP
-    MOV CX, 794
-    MOV DH, 3    ;renglon
-    MOV DL, 55    ;columna
-    MOV AL, 0    ;modo
-    MOV BH, 0
-    MOV BL, 0CFH
-    INT 10H
-;OPCIONES PARA MANDAR MENSAJE
-    IMP_CAD_COLOR PREGUNTARMENSAJE, 25, 4, 10, 0, 0CFH, 0
-    IMP_CAD_COLOR OPCMSJ1, 5, 5, 10, 0, 0CFH, 0
-    IMP_CAD_COLOR OPCMSJ2, 5, 6, 10, 0, 0CFH, 0 
-
-RESPUESTA1:             
-    IMP_CAD_COLOR RESMSJ, 11, 7, 10, 0, 0CFH, 0
-    CURSOR 7,21,0 ;AGREGAR 11 A LA COLUMNA
-    MOV AH,1
-    INT 21H
-    
-    MOV R,AL 
-    CMP AL,'1'
-    JE ESCRIBIRMENSAJE
-    CMP AL,'2'
-    JE FIN
-    JMP RESPUESTA1
-    
-    ESCRIBIRMENSAJE:
-    IMP_CAD_COLOR PEDIRMSJ, 20, 9, 13, 0, 0CFH, 0
-    IMP_CAD_COLOR ESPACIOMSJ, 35, 11, 13, 0, 0CFH, 0
-    IMP_CAD_COLOR ESPACIOMSJ, 35, 13, 13, 0, 0CFH, 0
-
-    ;ESCRIBIR EL MENSAJE
-    CURSOR 11,13,0
-    LEER_CADENA MENSAJE
-    CURSOR 13,13,0
-    LEER_CADENA MENSAJE2
-    
-    IMP_CAD_COLOR MSJDENUEZ, 28, 15, 10, 0, 0CFH, 0 
-    IMP_CAD_COLOR MSJDENUEZ2, 28, 16, 10, 0, 0CFH, 0                                         
-    
-MENSAJENUEZ:    
-    IMP_CAD_COLOR RESMSJ, 11, 17, 10, 0, 0CFH, 0
-    CURSOR 17,21,0 ;SUMAR 11
-        MOV AH,1
-        INT 21H
-    
-    MOV R,AL
-    CMP R,'1'
-    JE PREGUNTARDESTINATARIO
-    CMP R,'2'
-    JE ESCRIBIRMENSAJE
-    JMP MENSAJENUEZ
-        
-PREGUNTARDESTINATARIO:
-    ;CREAR DIRECTORIO SI NO EXISTE
-    CREAR_CARPETA RUTA
-    
-    
-    
-    IMP_CAD_COLOR MSJDESTINATARIO, 14, 19, 10, 0, 0CFH, 0
-    CURSOR 19,24,0
-    LEER_CADENA DESTINATARIO
-
-; GUARDAMOS LOS 2 MENSAJE EN UNO SOLO
-    MOV CX,35
-    MOV DI,0
-    MOV SI,2
-    MOV RW,0
-LOOP_COPIAR_CAD:
-    PUSH CX
-    
-        MOV AL,MENSAJE[SI]
-        MOV MENSAJER[DI],AL
-        CMP AL,0DH
-        JE SALIR
-        INC SI
-        INC DI
-        INC RW
-    POP CX
-LOOP LOOP_COPIAR_CAD
-
-;ESPACIO EN EL MENSAJE RESULTANTE  
-SALIR:
-    MOV SI,RW
-    MOV MENSAJER[SI],20H
-    INC RW
-
-;MENSAJE2 A MENSAJER    
-    MOV CX,35
-    MOV SI,2
-    MOV DI,RW
-LOOP_COPIAR_CAD2:   
-    PUSH CX
-        
-        MOV AL,MENSAJE2[SI]
-        MOV MENSAJER[DI],AL
-        CMP AL,0DH
-        JE SALIR2
-        INC SI
-        INC DI
-        INC RW
-    
-    POP CX
-LOOP LOOP_COPIAR_CAD2 
-
-SALIR2:    
-    MOV SI,RW
-    MOV MENSAJER[SI],20H
-    INC RW  
-    
-    MOV CX,70
-LLENAR_MENSAJER:
-    PUSH CX
-        
-        MOV SI,RW
-        MOV MENSAJER[SI],20H
-        INC RW
-        CMP RW,71
-        JE GUARDAR_JOSE
-           
-    POP CX 
-LOOP LLENAR_MENSAJER
-    
-    
-;GUARDAMOS EL MENSAJE DEPENDIENDO DEL DESTINATARIO
+    RET ;RETURN
+ENDP
+;***************************************************
+END
 
 
-;JOSE
-GUARDAR_JOSE:
-    MOV CX,4
-    MOV SI,0
-    MOV DI,2
-CICLO_GUARDAR_JOSE:
-    PUSH CX
-        MOV DH,DESTINATARIO[DI]
-        MOV DL,NOMBREJOSE[SI] 
-        CMP DH,DL
-        JE SIGUELE_JOSE
-        JMP GUARDAR_GADYEL
-SIGUELE_JOSE:        
-    INC SI
-    INC DI
-    POP CX
-LOOP CICLO_GUARDAR_JOSE
-
-;CREAR EL ARCHIVO DE JOSE
-    CREAR_ARCHIVO RUTAJOSE, 32
-
-;ESCRIBIR EN EL ARCHIVO DE JOSE 
-    ABRIR_ARCHIVO RUTAJOSE,2
-    ESCRIBIR_ARCHIVO ID,71,MENSAJER
-    JMP UBICACION
-    
-;GADYEL    
-GUARDAR_GADYEL:    
-    MOV CX,4
-    MOV SI,0
-    MOV DI,2
-CICLO_GUARDAR_GADYEL:
-    PUSH CX
-        MOV DH,DESTINATARIO[DI]
-        MOV DL,NOMBREGADYEL[SI] 
-        CMP DH,DL
-        JE SIGUELE_GADYEL
-        JMP GUARDAR_GERRY
-SIGUELE_GADYEL:        
-    INC SI
-    INC DI
-    POP CX
-LOOP CICLO_GUARDAR_GADYEL 
 
 
-;CREAR EL ARCHIVO DE GADYEL
-    CREAR_ARCHIVO RUTAGADYEL, 32
 
-;ESCRIBIR EN EL ARCHIVO 
-    ABRIR_ARCHIVO RUTAGADYEL,2
-    ESCRIBIR_ARCHIVO ID,71,MENSAJER
-    JMP UBICACION
-    
-    MOV AH, 3EH
-    MOV BX, ID
-    INT 21H 
+
+
+
+
+
+
        
-    JMP UBICACION
-    
-;GERRY    
-GUARDAR_GERRY:    
-    MOV CX,5
-    MOV SI,0
-    MOV DI,2
-CICLO_GUARDAR_GERRY:
-    PUSH CX
-        MOV DH,DESTINATARIO[DI]
-        MOV DL,NOMBREGERRY[SI] 
-        CMP DH,DL
-        JE SIGUELE_GERRY
         JMP PREGUNTARDESTINATARIO
 SIGUELE_GERRY:        
     INC SI
