@@ -26,6 +26,7 @@
 .STACK
 .DATA
 ;******************* VARIABLES LOGIN *************************    
+    COLOR           DB  0
     LINEA           DB  80  DUP(219)
     MSJUSUARIO      DB  "USUARIO:       "  
     MSJCONTRASEÑA   DB  "CONTRASE",165,"A:    "    
@@ -168,6 +169,38 @@
                     DB 0000_0001B   ;1H - 1
                     DB 0000_0110B   ;6H - 6
                     DB 0000_0010B   ;2H - 2                
+;******************************** FIN VARIABLES ENVIADO ***********************
+;==============================================================================
+;*********************************VARIABLES MENSAJE****************************
+    IMGMENSAJE      DB   '  @@@@@@@@@@@@@@@@@@@@@@@@@    ';31
+                    DB   '  @@                     @@    '
+                    DB   '  @@   @@@@@@            @@    '
+                    DB   '  @@                     @@    '
+                    DB   '  @@                     @@    '
+                    DB   '  @@   @@@@@@@@@@@@@@    @@    '
+                    DB   '@@@@@                     @@@@@'
+                    DB   '@@@  @@@    @@@@@@@@.   @@@@@@@'
+                    DB   '@@      @@@.         (@@@    @@'
+                    DB   '@@         @@@     @@@       @@'
+                    DB   '@@           @@ @@@&         @@'
+                    DB   '@@      @@@@@@( #@@@@@@      @@'
+                    DB   '@@    @@@@           @@@@    @@'
+                    DB   '@@ @@@@               @@@@   @@'
+                    DB   '@@@@@                   @@@@ @@'
+                    DB   '@@@                      @@@@@@'
+                    DB   '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@'
+        MSJTIENE    DB   '  _________________   _______     __  ___   __ ';47
+                    DB   ' /_  __/  _/ ____/ | / / ___/    / / / / | / / '
+                    DB   '  / /  / // __/ /  |/ / __/     / / / /  |/ /  '
+                    DB   ' / / _/ // /___/ /|  / /___    / /_/ / /|  /   '
+                    DB   '/_/ /___/_____/_/ |_/_____/    \____/_/_|_/    '
+        MSJMENSAJE  DB   '   /  |/  / ____/ | / / ___//   |     / / ____/'
+                    DB   '  / /|_/ / __/ /  |/ /\__ \/ /| |__  / / __/   '
+                    DB   ' / /  / / /___/ /|  /___/ / ___ / /_/ / /___   '
+                    DB   '/_/  /_/_____/_/ |_//____/_/  |_\____/_____/   '
+        BMENSAJE    DB   0
+        BSUMINISTRO DB   0                                                                                      
+;*******************************FIN VARIABLES MENSAJE**************************
 ;==============================================================================
 ;                                   MACROS                           
 ;==============================================================================  
@@ -239,18 +272,6 @@ CREAR_ARCHIVO   MACRO RUTA, TIPO,
         MOV ID, AX   ;REGRESA EL <ID> DEL ARCHIVO    
 CREAR_ARCHIVO   ENDM    
 
-PINTAR_FONDO MACRO COLOR
-    MOV CX,25
-    MOV RENGLON,0
-FONDO:
-    PUSH CX
-    
-        IMP_CAD_COLOR LINEA,80,RENGLON,0,0,COLOR,0       
-        INC RENGLON
-        
-    POP CX
-LOOP FONDO
-PINTAR_FONDO ENDM
 
 ENCABEZADO_Y_PIE  MACRO
 ;********************** ENCABEZADO ******************************* 
@@ -288,7 +309,8 @@ LOGIN:
     MOV DS, AX
     MOV ES, AX
     
-    PINTAR_FONDO 8FH
+MOV COLOR, 8FH
+CALL PINTAR_FONDO 
 
 LOGO_LOGIN:
     MOV AH,19
@@ -391,14 +413,9 @@ CONTRASEÑAINCORRECTA:
 ;                            MENÚ
 ;=================================================================    
 MENU:
-MOV CX,25
-MOV RENGLON, 0
-FONDOMENU:
-    PUSH CX
-    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 0FCH, 0       
-        INC RENGLON
-    POP CX
-LOOP FONDOMENU
+MOV COLOR, 0FCH
+CALL PINTAR_FONDO 
+
 
 ENCABEZADO_Y_PIE
 
@@ -448,12 +465,9 @@ ENCABEZADO_Y_PIE
 VENTANARECURSOS:
 MOV CX,25
 MOV RENGLON, 0
-FONDOVENTANARECURSOS:
-    PUSH CX
-    IMP_CAD_COLOR linea,80,RENGLON,0,0,0FCH,0       
-        INC RENGLON
-    POP CX
-LOOP FONDOVENTANARECURSOS
+
+MOV COLOR, 0FCH
+CALL PINTAR_FONDO 
 
 ENCABEZADO_Y_PIE
 
@@ -494,16 +508,9 @@ JMP CICLORECURSO
 ;                     VENTANA MENSAJE
 ;==========================================================       
 INICIO_MENSAJE:
-MOV CX,25
-    
-MOV RENGLON, 0
-FONDOMENSAJE:
-    PUSH CX
-    IMP_CAD_COLOR LINEA,80,RENGLON,0,0,0FCH,0
-        INT 10H        
-        INC RENGLON
-    POP CX
-LOOP FONDOMENSAJE
+
+MOV COLOR, 0FCH
+CALL PINTAR_FONDO 
 
 ENCABEZADO_Y_PIE
 
@@ -724,15 +731,8 @@ LOOP CICLO_GUARDAR_GERRY
 ;============================================================
 UBICACION:
 
-MOV CX,25
-MOV RENGLON, 0
-FONDOUBICACION:
-    PUSH CX
-    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 00FH, 0
-        INT 10H        
-        INC RENGLON
-    POP CX   
-LOOP FONDOUBICACION
+MOV COLOR, 0F0H
+CALL PINTAR_FONDO 
 
 ENCABEZADO_Y_PIE        
 
@@ -789,13 +789,10 @@ JMP REPEO
 VENTANA_ENVIADO:
 MOV CX,25
 MOV RENGLON, 0
-FONDOENVIADO:
-    PUSH CX
-    IMP_CAD_COLOR LINEA, 80, RENGLON, 0, 0, 00FH, 0
-        INT 10H        
-        INC RENGLON
-    POP CX   
-LOOP FONDOENVIADO
+
+MOV COLOR, 0FH
+CALL PINTAR_FONDO 
+
 
 ENCABEZADO_Y_PIE
 
@@ -910,13 +907,18 @@ ENTER:
             MOV RASTREO, AH ;RECUPERAR
   
         CMP RASTREO, 1CH
-        JE IMPRIMIR_CADENA
+        JE IMPRIMIR_MENSAJE
 JMP ENTER
 ;======================================================
 ;           IMPRIMIR_MENSAJE
 ;======================================================
-IMPRIMIR_CADENA:
-     
+IMPRIMIR_MENSAJE:
+
+MOV COLOR, 0FCH
+CALL PINTAR_FONDO 
+
+
+IMPRIMIR_CADENA:     
  MOV CX,0  ; LIMPIAR CX
  MOV CL,MENSAJE[1] ;CANTIDAD DE CARACTERES A IMPRIMIR DE <MENSAJE>
  MOV SI,2 
@@ -944,13 +946,26 @@ IMPRIMIR2:
        INT 21H
        INC SI
 LOOP IMPRIMIR2
-
-
+;==========================================================
+;               VENTANA MENSAJE
+;==========================================================
 
 FIN:
-    
         MOV AX, 4C00H
         INT 21H
+;************** SECCION DE PROCEDIMIENTOS **********       
+PINTAR_FONDO PROC
+    MOV CX,25
+    MOV RENGLON,0
+FONDO:
+    PUSH CX    
+        IMP_CAD_COLOR LINEA,80,RENGLON,0,0,COLOR,0       
+        INC RENGLON
+    POP CX
+LOOP FONDO
+RET
+PINTAR_FONDO ENDP
+;***************************************************
 END
 
 
