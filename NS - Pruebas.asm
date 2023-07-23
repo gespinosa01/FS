@@ -357,7 +357,8 @@ ENCABEZADO_Y_PIE  MACRO
     IMP_CAD_COLOR LINEA, 80, 1, 0, 0, 0F0H,0
     IMP_CAD_COLOR LINEA, 80, 2, 0, 0, 0F0H,0
     
-    IMP_CAD_COLOR ESLOGAN, 45, 1, 18, 0, 0FH, 0                                         
+    IMP_CAD_COLOR ESLOGAN, 45, 1, 18, 0, 0FH, 0 
+                                            
 
 ;******************** FIN ENCABEZADO *****************************
 
@@ -375,6 +376,7 @@ ENCABEZADO_Y_PIE  MACRO
     
     IMP_CAD_COLOR NOMBRE3, 26, 24,  3, 0, 0FH, 0
     IMP_CAD_COLOR MAESTRA, 21, 24, 55, 0, 0FH, 0
+    CALL HORA
 ;******************* FIN PIE DE PAGINA ***************************
 ENCABEZADO_Y_PIE ENDM
 ;============================================================
@@ -1166,7 +1168,56 @@ TECLA PROC
     
     RET ;RETURN
 ENDP
-;***************************************************
+;***************************************************  
+;Display Part
+DISP PROC    
+MOV DL,BH      ; Since the values are in BX, BH Part
+ADD DL,30H     ; ASCII Adjustment
+MOV AH,02H     ; To Print in DOS
+INT 21H
+MOV DL,BL      ; BL Part 
+ADD DL,30H     ; ASCII Adjustment
+MOV AH,02H     ; To Print in DOS
+INT 21H
+RET
+DISP ENDP      ; End Disp Procedure
+;**************************************************** 
+HORA PROC 
+        HOUR:
+            MOV AH,2CH    ; To get System Time
+            INT 21H
+            MOV AL,CH     ; Hour is in CH
+            AAM
+            MOV BX,AX
+            CALL DISP
+            
+            MOV DL,':'
+            MOV AH,02H    ; To Print : in DOS
+            INT 21H
+            
+            ;Minutes Part
+         MINUTES:
+            MOV AH,2CH    ; To get System Time
+            INT 21H
+            MOV AL,CL     ; Minutes is in CL
+            AAM
+            MOV BX,AX
+            CALL DISP
+            
+            MOV DL,':'    ; To Print : in DOS
+            MOV AH,02H
+            INT 21H
+            
+            ;Seconds Part
+         Seconds:
+            MOV AH,2CH    ; To get System Time
+            INT 21H
+            MOV AL,DH     ; Seconds is in DH
+            AAM
+            MOV BX,AX
+            CALL DISP
+    RET
+HORA ENDP
 END
 
 
