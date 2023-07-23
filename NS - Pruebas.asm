@@ -173,6 +173,7 @@
     DESTINATARIO        DB  11,0,12 DUP('$')
     R                   DB  0
     RW                  DW  0
+    RW2                 DW  0
     RUTA                DB  'C:\FIRULAIS\',0
     RUTAJOSE            DB  'C:\FIRULAIS\JOSE.txt',0
     RUTAGADYEL          DB  'C:\FIRULAIS\GADYEL.txt',0 
@@ -759,7 +760,9 @@ LOOP_COPIAR_CAD2:
     POP CX
 LOOP LOOP_COPIAR_CAD2 
 
-SALIR2:    
+SALIR2:
+    MOV AX,RW
+    MOV RW2,AX    
     MOV SI,RW
     MOV MENSAJER[SI],20H
     INC RW  
@@ -858,7 +861,7 @@ SIGUELE_GERRY:
     POP CX
 LOOP CICLO_GUARDAR_GERRY
 
-    ;CREAR EL ARCHIVO DE JOSE
+    ;CREAR EL ARCHIVO DE GERRY
     CREAR_ARCHIVO RUTAGERRY,32
 ;ESCRIBIR EN EL ARCHIVO 
     ABRIR_ARCHIVO RUTAGERRY,2
@@ -1089,6 +1092,8 @@ VENTANA_MENSAJE:
     CMP BMENSAJE, 0
     JE NO_IMPRIMIR_MENSAJE
     
+    LEER_ARCHIVO ID,RW2,MENSAJER    
+    
     MOV COLOR, 0C0H
     CALL PINTAR_FONDO
 
@@ -1111,38 +1116,18 @@ CALL PINTAR_FONDO
 
 
 IMPRIMIR_CADENA:     
- MOV CX,0  ; LIMPIAR CX
- MOV CL,MENSAJE[1] ;CANTIDAD DE CARACTERES A IMPRIMIR DE <MENSAJE>
- MOV SI,2 
+ MOV CX,RW  ; LIMPIAR CX
+ MOV SI,0 
 IMPRIMIR:    
        MOV AH, 5       ; INTERRUPCION PARA IMPRIMIR
-       MOV DL, MENSAJE[SI] ;CARACTER A  IMPRIMIR  
+       MOV DL, MENSAJER[SI] ;CARACTER A  IMPRIMIR  
        INT 21H
        INC SI
 LOOP IMPRIMIR 
-    
-    MOV AH, 5       ; IBTERRUPCION PARA IMPRIMIR
-    MOV DL, 0AH ;caracter a imprimir  
-    INT 21H     
-       
-    MOV AH, 5       ; IBTERRUPCION PARA IMPRIMIR
-    MOV DL, 0DH ;caracter a imprimir  
-    INT 21H  ; total de caracteres 
-            
-MOV CX,0  ;LIMPIAR CX
-MOV CL,MENSAJE2[1] ;CANTIDAD DE CARACTERES A IMPRIMIR DE <MENSAJE2> 
-MOV SI,2
-IMPRIMIR2:    
-       MOV AH,5       ; IBTERRUPCION PARA IMPRIMIR
-       MOV DL,MENSAJE2[SI] ;caracter a imprimir  
-       INT 21H
-       INC SI
-LOOP IMPRIMIR2
-
 
 NO_IMPRIMIR_MENSAJE:
-CMP BSUMINISTRO, 0
-JE  FIN
+    CMP BSUMINISTRO, 0
+    JE  FIN
 
 SUMINISTRO_FIN:
 IMP_CAD_COLOR IMGABRIR, 225, 3, 3, 0, 0F2H, 0
@@ -1202,6 +1187,42 @@ HORA PROC
             MOV AH,2CH    ; To get System Time
             INT 21H
             MOV AL,CL     ; Minutes is in CL
+            AAM
+            MOV BX,AX
+            CALL DISP
+            
+            MOV DL,':'    ; To Print : in DOS
+            MOV AH,02H
+            INT 21H
+            
+            ;Seconds Part
+         Seconds:
+            MOV AH,2CH    ; To get System Time
+            INT 21H
+            MOV AL,DH     ; Seconds is in DH
+            AAM
+            MOV BX,AX
+            CALL DISP
+    RET
+HORA ENDP
+END
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+        n CL
             AAM
             MOV BX,AX
             CALL DISP
