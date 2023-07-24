@@ -61,6 +61,31 @@
                     DB  '                                                                               ',10,13 
 ;***************************** FIN VARIABLES LOGIN ********************************************
 ;==============================================================================================
+;***************************** VARIABLES ENCENDIENDO ******************************************
+                                       
+IMGPOWER    DB  '                  ',219,219,219,219,219,'              ',10,13 
+            DB  '                  ',219,219,219,219,219,'              ',10,13    
+            DB  '                  ',219,219,219,219,219,'              ',10,13    
+            DB  '         ',219,219,219,219,219,219,'   ',219,219,219,219,219,'   ',219,,219,,219,219,219,219,'     ',10,13    
+            DB  '       ',219,219,219,219,219,219,219,'    ',219,219,219,219,219,'    ',219,,219,219,219,219,219,219,'   ',10,13    
+            DB  '      ',219,219,219,219,219,'       ',219,219,219,219,219,'       ',219,,219,219,219,219,219,' ',10,13    
+            DB  '     ',219,219,219,219,219,'        ',219,219,219,219,219,'        ',219,,219,219,219,219,' ',10,13    
+            DB  '    ',219,219,219,219,219,'          ',219,219,219,'          ',219,219,219,219,219,10,13    
+            DB  '    ',219,219,219,219,219,'          ',219,219,219,'          ',219,219,219,219,219,10,13    
+            DB  '    ',219,219,219,219,219,'                       ',219,219,219,219,219,10,13    
+            DB  '    ',219,219,219,219,219,219,'                     ',219,219,219,219,219,219,'',10,13    
+            DB  '     ',219,219,219,219,219,219,'                   ',219,219,219,219,219,219,' ',10,13    
+            DB  '      ',219,219,219,219,219,219,219,'               ',219,219,219,219,219,219,219,'  ',10,13    
+            DB  '        ',219,219,219,219,219,219,219,219,219,'       ',219,219,219,219,219,219,219,219,219,'    ',10,13    
+            DB  '           ',219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,'       ',10,13    
+            DB  '                ',219,219,219,219,219,219,219,219,219,'            ',10,13    
+FIRULAIS_ENCENDIDO DB '==FIRULAIS ESTA EN PROCESO DE INICIO==';38
+FIRULAIS_APAGADO   DB '==FIRULAIS ESTA EN PROCESO DE APAGADO=='
+ESPERE             DB '          POR FAVOR ESPERE            ';38
+SEGUNDOS           DB 0
+ADIOS              DB 'ADIOS:)'
+;************************** FIN VARIABLES ENCENDIENDO *****************************************
+;==============================================================================================
 ;***************************** VARIABLES MENÚ *************************************************
     MSJMENU   DB      '     FUNCIONALIDADES     '
     MSJFUNCION  DB      '[PRESIONA ENTER PARA CONTINUAR]';31
@@ -155,7 +180,7 @@
                 DB '                                                                        ',10,13
                 DB '                                                                        ',10,13
                 DB '                                                                        ',10,13          
-
+MSJSUMINISTRO   DB 'TIENE SUMINISTROS, TOMELOS';21 
 ;***************FIN VARIABLES COMPUERTA ABIERTA/CERRADA************************
 ;==============================================================================
 ;************************** VARIABLES MENSAJE *********************************
@@ -254,6 +279,11 @@
                     DB   '  / /|_/ / __/ /  |/ /\__ \/ /| |__  / / __/   ',10,13
                     DB   ' / /  / / /___/ /|  /___/ / ___ / /_/ / /___   ',10,13
                     DB   '/_/  /_/_____/_/ |_//____/_/  |_\____/_____/   ',10,13
+        MSJPAQUETE  DB   '     ___  ___  ____  __  ________________      ',10,13
+                    DB   '    / _ \/ _ |/ __ \/ / / / __/_  __/ __/      ',10,13
+                    DB   '   / ___/ __ / /_/ / /_/ / _/  / / / _/        ',10,13
+                    DB   '  /_/  /_/ |_\___\_\____/___/ /_/ /___/        ',10,13
+
         BMENSAJE    DB   0
         BSUMINISTRO DB   0                                                                                      
 ;*******************************FIN VARIABLES MENSAJE**************************
@@ -482,11 +512,24 @@ FIN_COMPARAR_CONTRASEÑA:
     
 CONTRASEÑACORRECTA: 
     IMP_CAD_COLOR CONTRASEÑACOR, 40, 23, 30, 0, 0F8H, 0
-    JMP MENU
+    JMP ENCENDIENDO
 
 CONTRASEÑAINCORRECTA:
     IMP_CAD_COLOR   CONTRASEÑAINC, 40, 23, 30, 0, 0FCH, 0
-    JMP CONTRASEÑA_INICIO
+JMP CONTRASEÑA_INICIO
+;=================================================================
+;                           ENCENDIENDO
+;=================================================================
+ENCENDIENDO:
+    MOV COLOR, 0FH
+    CALL PINTAR_FONDO 
+
+
+IMP_CAD_COLOR IMGPOWER, 624, 5, 0, 0, 0F2H, 0    
+IMP_CAD_COLOR FIRULAIS_ENCENDIDO 38, 10, 40, 0, 0F2H, 0
+IMP_CAD_COLOR ESPERE 38, 12, 40, 0, 0F2H, 0
+
+CALL DELAY
     
 ;=================================================================
 ;                            MENÚ
@@ -997,6 +1040,8 @@ JBE SIGUIENTE_PASO_HORARIO
     OUT 127,AL;APAGAMOS EL TERMOMETRO
     
 CONTINUANDO_VUELTAS:
+MOV AL, 0
+OUT 127, AL
 ;========================================================
 ;                   FIN TERMOMETRO
 ;========================================================
@@ -1103,7 +1148,7 @@ ENCABEZADO_Y_PIE
 IMP_CAD_COLOR  IMGMENSAJE, 1325, 5, 50, 0, 0FH, 0
 IMP_CAD_COLOR  TIENE, 242, 10, 0, 4, 0FH, 0
 IMP_CAD_COLOR  MSJMENSAJE, 196, 15, 0, 0, 0FH, 0
-IMP_CAD_COLOR MSJIMPRIMIR, 31, 20, 3, 0, 0F0H,0
+IMP_CAD_COLOR  MSJIMPRIMIR, 31, 20, 3, 0, 0F0H,0
 
 CALL TECLA
 ;======================================================
@@ -1126,12 +1171,92 @@ IMPRIMIR:
 LOOP IMPRIMIR 
 
 NO_IMPRIMIR_MENSAJE:
-    CMP BSUMINISTRO, 0
-    JE  FIN
+CMP BSUMINISTRO, 0
+JE  FIRULAIS_APAGANDO
 
 SUMINISTRO_FIN:
-IMP_CAD_COLOR IMGABRIR, 225, 3, 3, 0, 0F2H, 0
-    
+MOV COLOR, 0FH
+CALL PINTAR_FONDO
+
+IMP_CAD_COLOR MSJABRIR, 48, 3, 15, 0, 0F2H, 0 
+IMP_CAD_COLOR IMGABRIR, 225, 7, 3, 0, 0F2H, 0
+;*** VUELTAS EN SENTIDO ANTIHORARIO ***
+    ;MOVEMOS A BX, VUELTA_ANTI
+    MOV BX, OFFSET VUELTA_ANTI   ;INICIAMOS DESDE LA POSICION
+    MOV SI, 0
+    MOV CX, 0   ;CONTADOR DE PASOS 
+    MOV CONTADOR, 0
+    SIGUIENTE_PASO_ANTIHORARIO4:
+        ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+        ;SE REALIZA UNA COMPROBACIÓN DE QUE 
+        ;ESTÉ FUNCIONANDO CORRECTAMENTE
+        WAIT6:
+            IN      AL, 07H
+            TEST    AL, 10000000B
+            JZ  WAIT6 ;SI EQUIVALE A CERO SEGUIRÁ ESPERANDO
+        ;SI YA ESTÁ LISTO ENTONCES COMIENZA
+        MOV AL, [BX][SI] 
+        OUT 7, AL   ;LE MANDA LA NUEVA POSICIÓN AL MOTOR
+        ;INCREMENTA LA POSICIÓN
+        INC SI      
+        CMP SI, 4   ;COMPARA SI YA DI? LOS 4 PASOS
+                    ;YA QUE ES UN MOTOR DE 4 PASOS
+                    ;SI YA COMPLETÓ 4 PASOS REGRESA 
+                    ;A LA POSICI?N INICIAL
+                   
+        JC  SIGUIENTE_PASO_ANTIHORARIO4 
+        MOV SI, 0
+        INC CONTADOR
+        CMP CONTADOR, 5
+        JBE SIGUIENTE_PASO_ANTIHORARIO4
+IMP_CAD_COLOR MSJSUMINISTRO, 26, 10, 30, 0, 0F2H, 0
+CALL DELAY
+
+IMP_CAD_COLOR IMGCERRAR, 225, 7, 3, 0, 0F2H, 0
+IMP_CAD_COLOR MSJCERRAR, 49, 15, 15, 0, 0F2H, 0
+;**** VUELTAS EN SENTIDO HORARIO ****
+;MOVEMOS A BX, VUELTA_HORARIO
+MOV BX, OFFSET VUELTA_HORARIO   ;INICIAMOS DESDE LA POSICION
+MOV SI, 0
+MOV CX, 0   ;CONTADOR DE PASOS 
+MOV CONTADOR, 0
+SIGUIENTE_PASO_HORARIO3:
+    ;STEPPER MOTOR FUNCIONA EN EL PIN 7
+    ;SE REALIZA UNA COMPROBACI?N DE QUE 
+    ;EST? FUNCIONANDO CORRECTAMENTE
+    WAIT7:
+        IN      AL, 07H
+        TEST    AL, 10000000B
+        JZ  WAIT7 ;SI EQUIVALE A CERO SEGUIR? ESPERANDO
+    ;SI YA EST? LISTO ENTONCES COMIENZA
+    MOV AL, [BX][SI] 
+    OUT 7, AL   ;LE MANDA LA NUEVA POSICI?N AL MOTOR
+    ;INCREMENTA LA POSICI?N
+    INC SI      
+    CMP SI, 4   ;COMPARA SI YA DI? LOS 4 PASOS
+                ;YA QUE ES UN MOTOR DE 4 PASOS
+                ;SI YA COMPLET? 4 PASOS REGRESA 
+                ;A LA POSICI?N INICIAL
+               
+    JC  SIGUIENTE_PASO_HORARIO3 
+    MOV SI, 0
+    INC CONTADOR
+    CMP CONTADOR, 8
+    JBE SIGUIENTE_PASO_HORARIO3
+;=================================================================
+;                           APAGANDO
+;=================================================================
+
+FIRULAIS_APAGANDO:
+    MOV COLOR, 00H
+    CALL PINTAR_FONDO 
+
+
+IMP_CAD_COLOR IMGPOWER, 624, 5, 0, 0, 0CH, 0    
+IMP_CAD_COLOR FIRULAIS_APAGADO 38, 10, 40, 0, 0FH, 0
+IMP_CAD_COLOR ESPERE 38, 12, 40, 0, 0FH, 0
+CALL DELAY
+IMP_CAD_COLOR ADIOS 7, 14, 55, 0, 0FH, 0     
 
 FIN:
         MOV AX, 4C00H
@@ -1205,42 +1330,20 @@ HORA PROC
             CALL DISP
     RET
 HORA ENDP
-END
+;******************************************************
+DELAY PROC
+    MOV CL, 0FFH  ;MOVER A CL EL NUMERO 31D - 
+    MOV CH, 02H  ;MOVER A CH EL NUMERO 01H
 
+L1: 
+    DEC CH  ;DECREMENTA A CH EN 1       
+JNZ L1      ;COMPARA SI CH NO EQUIVALE A 0
 
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-        n CL
-            AAM
-            MOV BX,AX
-            CALL DISP
-            
-            MOV DL,':'    ; To Print : in DOS
-            MOV AH,02H
-            INT 21H
-            
-            ;Seconds Part
-         Seconds:
-            MOV AH,2CH    ; To get System Time
-            INT 21H
-            MOV AL,DH     ; Seconds is in DH
-            AAM
-            MOV BX,AX
-            CALL DISP
-    RET
-HORA ENDP
+L2: 
+    DEC CL ;DECREMENTAR A CL EN 1
+    JNZ L2        
+    RET        
+DELAY ENDP
 END
 
 
